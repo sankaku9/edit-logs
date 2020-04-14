@@ -10,10 +10,7 @@ class ComRepOnDict:
 
     def replaceOnRegexDict(self, loggername, filePath, regexDict, inenc, outenc, nl):
     # 置換リストOrderedDictに従ってファイル内文字列を全て置換する。
-        #logger.log(10, str(sys._getframe().f_code.co_name))
-        #logger.log(10, ''.join(['target file: ', filePath]))
-        comR = common.EditLogBase.EditLogBase('')
-        #logger = logging.getLogger(''.join([loggername, '.', re.sub('\.[^/\\\.]*', '', os.path.basename(__file__))]))
+        comR = common.EditLogBase.EditLogBase()
 
         # 置換対象ファイルを読み込む。
         with open(filePath, newline='', encoding=inenc) as f:

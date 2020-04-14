@@ -12,20 +12,17 @@ import common.EditLogLogging
 
 class EditLogBase:
 
-    def __init__(self, loggerName):
-        if loggerName != '':
-            common.EditLogLogging.EditLogLogging(loggerName)
-            self.thisLogger = logging.getLogger(''.join([loggerName, '.', re.sub('\..*', '', os.path.basename(__file__))]))
-
+    def __init__(self):
+        pass
 
     # 起動処理
-    def start(self):
-        self.thisLogger.log(20, '---start--------------------')
+    def start(self, logger):
+        logger.log(20, '---start--------------------')
         pass
 
     # 終了処理
-    def end(self):
-        self.thisLogger.log(20, '---end--------------------')
+    def end(self, logger):
+        logger.log(20, '---end--------------------')
         sys.exit()
 
     # クリーンなディレクトリ作成
@@ -202,7 +199,7 @@ class EditLogBase:
     def replaceEncErrorWrite(self, loggername, filePath, i, tf, lineReplaced, inenc, outenc):
 
         logger = logging.getLogger(''.join([loggername, '.', re.sub('\.[^/\\\.]*', '', os.path.basename(__file__))]))
-        comR = common.EditLogBase.EditLogBase('')
+        comR = common.EditLogBase.EditLogBase()
 
         try:
             tf.write(lineReplaced.encode(outenc))

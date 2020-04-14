@@ -6,9 +6,11 @@
 #
 import os
 import re
+import sys
 import logging
 import configparser
 import common.EditLogBase
+import common.EditLogLogging
 import common.ComChgSep
 
 if __name__ == '__main__':
@@ -20,24 +22,31 @@ if __name__ == '__main__':
     # 当処理で共通的に使用するLogger名
     LOGGER_NAME = 'chg_sep_log'
 
+    # 引数チェック
+    if len(sys.argv) != 2:
+        print('Usage: > chgSep.exe [Config File Path]')
+        sys.exit()
+
+    # 設定ファイル読み込み
+    confParser = configparser.RawConfigParser()
+    confParser.read(sys.argv[1] , encoding=CONF_ENC)
+
+    common.EditLogLogging.EditLogLogging(LOGGER_NAME, confParser)
+
+
     # 共通クラスインスタンス取得
     # 共通クラス内で使用するLoggerNameを指定する。
-    comE = common.EditLogBase.EditLogBase(LOGGER_NAME)
+    comE = common.EditLogBase.EditLogBase()
     comCS = common.ComChgSep.ComChgSep()
 
-    thisFileFullPath = os.path.abspath(__file__)
-
-    # 設定値取得用
-    CONF = comE.chgRel2AbsPath(''.join(['../conf/',re.sub(r'\..*','',os.path.basename(__file__)),'.conf']),thisFileFullPath,'/')
+    # pyinstallerでexe化した時を想定して__file__ではなくsys.argv[0]を使用する
+    thisFileFullPath = os.path.abspath(sys.argv[0])
 
     # 当処理内で使用するLoggerオブジェクト取得
     # ※LOGGER_NAMEのLogger設定は共通クラスCommonRootインスタンスinit内で実施済み。
     logger = logging.getLogger(''.join([LOGGER_NAME, '.', re.sub('\.[^/\\\.]*', '', os.path.basename(__file__))]))
     # 起動共通
-    comE.start()
-    # 設定ファイル読み込み
-    confParser = configparser.SafeConfigParser()
-    confParser.read(CONF, encoding=CONF_ENC)
+    comE.start(logger)
 
     # config格納ディレクトリリスト
     confPaths = []
@@ -47,7 +56,7 @@ if __name__ == '__main__':
         comE.makeDir(comE.chgRel2AbsPath(comE.delQuoteStartEnd(confParser.get('baseset', 'WRITE_DIR')), thisFileFullPath,'/'))
     except Exception as e:
         logger.exception(e)
-        comE.end()
+        comE.end(logger)
 
     # 出力先ディレクトリに指定ディレクトリからのディレクトリ構成を再現する
     # ソースディレクトリのファイルを出力ディレクトリにコピー
@@ -141,7 +150,7 @@ if __name__ == '__main__':
                 except Exception as e:
                     #何かしらエラーが発生した際はログ出力して終了
                     logger.exception(e)
-                    comE.end()
+                    comE.end(logger)
 
     # 終了共通
-    comE.end()
+    comE.end(logger)
