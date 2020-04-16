@@ -1,6 +1,4 @@
-import os
 import logging
-import common.EditLogBase
 
 class EditLogLogging:
 
@@ -11,15 +9,10 @@ class EditLogLogging:
     # return: logger : logging.getLogger()
     def setLogger(self, logger_name, confParser):
 
-        comE = common.EditLogBase.EditLogBase()
-
-        thisFileFullPath = os.path.abspath(__file__)
-
         # configファイルのsection名
         LOG_CAT = 'logging'
 
-        logFilePath = comE.chgRel2AbsPath(confParser.get(LOG_CAT, 'PATH'), thisFileFullPath, '/../')
-
+        logFilePath = confParser.get(LOG_CAT, 'PATH')
         logger = logging.getLogger(logger_name)
         # ログレベル設定
         logger.setLevel(10)
