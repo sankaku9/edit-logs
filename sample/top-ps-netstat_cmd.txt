@@ -1,3 +1,0 @@
-# watch "date '+%Y/%m/%d %H:%M:%S' >> /tmp/top.txt;top -bn1 >> /tmp/top.txt"
-# watch "date '+%Y/%m/%d %H:%M:%S' >> /tmp/ps.txt;ps auxwww >> /tmp/ps.txt"
-# watch "date '+%Y/%m/%d %H:%M:%S' >> /tmp/netstat.txt;netstat -anp >> /tmp/netstat.txt"
