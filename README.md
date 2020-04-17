@@ -1,75 +1,88 @@
 # editLogs
 
-CSV形式ファイルのセパレータ変換。
-pleiades ultimate プロジェクト。
-
 ## 動作確認環境
 
-|OS|Python|
-|:--:|:--:|
-|Windows 10|3.6.2|
-|Debian 9.1.0|3.5.3|
-|CentOS 7.3|3.6.2 (IUC)  ※|
+Windows 10
 
-※ shebangを変更、もしくは以下のように実行<br>
-`$ /usr/bin/etc python3.6 ./chgSep.py`
+## chgSep.exe
 
-## python追加パッケージ
-
-* configparser
-
-## 起動方法
-適当なディレクトリに配備して、bin配下の以下を実行。
-
-- ./chgSep.py
-
-- ./replaceOnDict.py
-
-githubから落としてそのまま実行するとsampleディレクトリ内にrsltから始まるディレクトリが作成される。
-rsltディレクトリにはsampleファイルを変換した結果が格納される。
-
-## chgSep.py
-
-対象ディレクトリ内のファイルを再帰的に全て読み取り、CSV形式ファイルのセパレータを変更して指定ディレクトリ内にファイル出力する。
+対象フォルダ内のファイルを再帰的に全て読み取り、CSV形式ファイルのセパレータを変更して指定フォルダ内にファイル出力する。
 対応セパレータはカンマ、タブ、スペース。スペース区切りの場合は連続するスペースを1つのセパレータとみなす。
 
-#### 機能
+## replaceOnDict.exe
 
-<details>
-<ul>
-  <li>入出力ディレクトリの指定。</li>
-  <li>入出力ファイルの文字エンコード指定。<br>
-  入力ファイルと出力ファイルで文字エンコードを変更していて、変換できない文字が存在する場合は該当文字を「●」に置換して該当ファイルと行をログ出力します。</li>
-  <li>出力ファイルの改行コード指定。入力ファイルの改行コードをそのまま反映することも可能です。)</li>
-  <li>囲み文字(ダブルクォートとか)の指定。変換は不可。</li>
-  <li>セパレータ変換対象列数の指定。セパレータにスペースを選択した場合のみ使用可能。<br>(左から数えて〇番目まで変換・・・一番右の列に引数付きのコマンドが出力されるtopコマンドとか向けです。)</li>
-  <li>行内から日時文字列を取得して列の先頭に付与する。また、次行に日時文字列が含まれない場合は前行の日時文字列を付与する。<br>
-  Apacheのデフォルトアクセスログ形式の日付をExcelで読みやすくしたいとき向けです。<br>
-  `# watch "date '+%Y/%m/%d %H:%M:%S' >> /tmp/top.txt;top -bn1 >> /tmp/top.txt"`<br>
-  みたいなコマンドで取得したファイルの全行に日時を含めたいとき向けでもあります。</li>
-  <li>正規表現に一致する行のみを抜き出す。<br>
-  連続取得したtop等の結果から特定プロセスの行だけを抜き出したいとき向けです。<br>
-  netstatのように「スペース区切りの場合は連続するスペースを1つのセパレータとみなす」<br>
-  という考え方だと行ごとの列数が変わってしまって見づらいログの場合はこの設定で必要な行のみ抜き出します。</li>
-</ul>
-<br>
-さらなる詳細はconfディレクトリ内chgSep.conf及びsample/xsvディレクトリ内の各ディレクトリに配備されているchgSepOrg.confに記載しています。<br>
-<br>
-(sample/xsvディレクトリ内でchgSepOrg.confが存在しないディレクトリのファイルに対してはchgSep.confの設定に従って変換を行います。)
-</details>
+対象フォルダ内のファイルを再帰的に全て読み取り、置換前後の文字列が記載された一覧ファイルに従って置換したファイルを指定フォルダ内に出力します。
 
-## replaceOnDict.py
+## インストール
 
-対象ディレクトリ内のファイルを再帰的に全て読み取り、置換前後の文字列が記載された一覧ファイルに従って置換したファイルを指定ディレクトリ内に出力します。
+「editLogs_v20.zip」を任意の場所に解凍する。<br>
+※ここでは「C:\tmp」に解凍する前提で記載する。
 
-#### 機能
-<details>
-<ul>
-  <li>入出力ディレクトリの指定。</li>
-  <li>入出力ファイルの文字エンコード指定。<br>
-  入力ファイルと出力ファイルで文字エンコードを変更していて、変換できない文字が存在する場合は該当文字を「●」に置換して該当ファイルと行をログ出力します。</li>
-  <li>出力ファイルの改行コード指定。入力ファイルの改行コードをそのまま反映することも可能です。)</li>
-</ul>
-<br>
-さらなる詳細はconfディレクトリ内replaceOnDict.confに記載しています。
-</details>
+## chgSep.exe 実行
+
+1. 設定ファイル C:\tmp\editLogs\conf\chgSep\ChgSep.conf を編集する。<br>
+※設定ファイルの文字コードは「UTF8」としてください。
+※設定ファイルは任意のパス、ファイル名でも問題ありません。
+
+2. 設定ファイルのパラメータ「SOURCE_DIR」に指定したフォルダに変換対象ファイルを格納する。
+
+3. コマンドプロンプトを起動して以下を実行する。<br>
+`> C:\tmp\editLogs\bin\chgSep.exe C:\tmp\editLogs\conf\chgSep\chgSep.conf`<br>
+※実行ファイル及び設定ファイルは相対パスで実行しても問題ありません。
+※設定ファイルを任意のパス、名前とした場合はそれを第一引数に指定してください。
+
+4. 設定ファイル のパラメータ「WRITE_DIR」に指定したフォルダに変換後ファイルが格納されていることを確認する。
+
+## replaceOnDict.exe 実行
+
+1. 設定ファイル C:\tmp\editLogs\conf\replaceOnDict\replaceOnDict.conf を編集する。<br>
+※設定ファイルの文字コードは「UTF8」としてください。
+※設定ファイルは任意のパス、ファイル名でも問題ありません。
+
+2. 置換文字列リストTSVファイル C:\tmp\editLogs\conf\replaceOnDict\replaceList.tsvを編集する。<br>
+※置換文字列リストTSVファイルの文字コードは「UTF8」としてください。<br>
+※置換文字列リストTSVファイルは設定ファイルの「REPLACE_LIST_FILE」に任意のファイルパス、名前を指定できます。
+
+3. 設定ファイルのパラメータ「SEARCH_DIR」に指定したフォルダに変換対象ファイルを格納する。
+
+4. コマンドプロンプトを起動して以下を実行する。<br>
+`> C:\tmp\editLogs\bin\replaceOnDict.exe C:\tmp\editLogs\conf\replaceOnDict\replaceOnDict.conf`<br>
+※実行ファイル及び設定ファイルは相対パスで実行しても問題ありません。
+※設定ファイルを任意のパス、名前とした場合はそれを第一引数に指定してください。
+
+5. 設定ファイル のパラメータ「WRITE_DIR」に指定したフォルダに変換後ファイルが格納されていることを確認する。
+
+## サンプルの実行
+
+### replaceOnDictサンプル実行
+
+`> C:\tmp\editLogs\bin\replaceOnDict.exe ../conf/replaceOnDict/replaceOnDict.conf`<br>
+
+### chgSepサンプル実行 CSVをTSVに変換
+
+`> C:\tmp\editLogs\bin\chgSep.exe C:\tmp\editLogs\conf\chgSep\chgSep.conf`<br>
+
+### chgSepサンプル実行 TSVをCSVに変換
+
+`> C:\tmp\editLogs\bin\chgSep.exe C:\tmp\editLogs\conf\chgSep\chgSep_TSV2CSV.conf`<br>
+
+### chgSepサンプル実行 Apacheアクセスログのスペース区切りをTSVに変換
+
+`> C:\tmp\editLogs\bin\chgSep.exe C:\tmp\editLogs\conf\chgSep\chgSep_access_log_SPACE2TAB.conf`<br>
+
+### chgSepサンプル実行 netstatコマンド実行結果のスペース区切りをTSVに変換
+
+`> C:\tmp\editLogs\bin\chgSep.exe C:\tmp\editLogs\conf\chgSep\chgSep_netstat_SPACE2TAB.conf`<br>
+
+### chgSepサンプル実行 psコマンド実行結果のスペース区切りをTSVに変換
+
+`> C:\tmp\editLogs\bin\chgSep.exe C:\tmp\editLogs\conf\chgSep\chgSep_ps_SPACE2TAB.conf`<br>
+
+### chgSepサンプル実行 topコマンド実行結果のスペース区切りをTSVに変換
+
+`> C:\tmp\editLogs\bin\chgSep.exe C:\tmp\editLogs\conf\chgSep\chgSep_top_SPACE2TAB.conf`<br>
+
+### chgSepサンプル実行 CSVをTSVに変換　文字コード変換込み
+
+`> C:\tmp\editLogs\bin\chgSep.exe C:\tmp\editLogs\conf\chgSep\chgSep_enctest.conf`<br>
+
