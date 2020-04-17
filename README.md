@@ -1,15 +1,15 @@
 # editLogs
 
-## 動作確認環境
+### 動作確認環境
 
 Windows 10
 
-## chgSep.exe
+### chgSep.exe
 
 対象フォルダ内のファイルを再帰的に全て読み取り、CSV形式ファイルのセパレータを変更して指定フォルダ内にファイル出力する。
 対応セパレータはカンマ、タブ、スペース。スペース区切りの場合は連続するスペースを1つのセパレータとみなす。
 
-## replaceOnDict.exe
+### replaceOnDict.exe
 
 対象フォルダ内のファイルを再帰的に全て読み取り、置換前後の文字列が記載された一覧ファイルに従って置換したファイルを指定フォルダ内に出力します。
 
@@ -18,7 +18,9 @@ Windows 10
 「editLogs_v20.zip」を任意の場所に解凍する。<br>
 ※ここでは「C:\tmp」に解凍する前提で記載する。
 
-## chgSep.exe 実行
+## 実行方法
+
+### chgSep.exe 実行
 
 1. 設定ファイル C:\tmp\editLogs\conf\chgSep\ChgSep.conf を編集する。<br>
 ※設定ファイルの文字コードは「UTF8」としてください。
@@ -33,7 +35,7 @@ Windows 10
 
 4. 設定ファイル のパラメータ「WRITE_DIR」に指定したフォルダに変換後ファイルが格納されていることを確認する。
 
-## replaceOnDict.exe 実行
+### replaceOnDict.exe 実行
 
 1. 設定ファイル C:\tmp\editLogs\conf\replaceOnDict\replaceOnDict.conf を編集する。<br>
 ※設定ファイルの文字コードは「UTF8」としてください。
@@ -56,7 +58,7 @@ Windows 10
 
 ### replaceOnDictサンプル実行
 
-`> C:\tmp\editLogs\bin\replaceOnDict.exe ../conf/replaceOnDict/replaceOnDict.conf`<br>
+`> C:\tmp\editLogs\bin\replaceOnDict.exe C:\tmp\editLogs\conf\replaceOnDict\replaceOnDict.conf`<br>
 
 ### chgSepサンプル実行 CSVをTSVに変換
 
