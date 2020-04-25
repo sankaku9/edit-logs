@@ -18,7 +18,6 @@ if __name__ == '__main__':
     ########
     # 固定値
     ########
-    CONF_ENC = 'utf-8'
     # 当処理で共通的に使用するLogger名
     LOGGER_NAME = 'chg_sep_log'
 
@@ -29,7 +28,7 @@ if __name__ == '__main__':
 
     # 設定ファイル読み込み
     confParser = configparser.RawConfigParser()
-    confParser.read(sys.argv[1] , encoding=CONF_ENC)
+    confParser.read(sys.argv[1] , encoding=common.EditLogConstant.CONF_ENC)
 
     # 起動時のカレントワークディレクトリを保存しておく。
     orgCwd = os.getcwd()

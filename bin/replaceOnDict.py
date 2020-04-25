@@ -17,7 +17,6 @@ if __name__ == '__main__':
     ########
     # 固定値
     ########
-    CONF_ENC = 'utf-8'
     # 当処理で共通的に使用するLogger名
     LOGGER_NAME = 'rec_search_log'
 
@@ -28,7 +27,7 @@ if __name__ == '__main__':
 
     # 設定ファイル読み込み
     confParser = configparser.RawConfigParser()
-    confParser.read(sys.argv[1] , encoding=CONF_ENC)
+    confParser.read(sys.argv[1] , encoding=common.EditLogConstant.CONF_ENC)
 
     # 起動時のカレントワークディレクトリを保存しておく。
     orgCwd = os.getcwd()
@@ -60,9 +59,9 @@ if __name__ == '__main__':
         comE.end(logger)
 
     # 置換文字列リストファイルをOrderedDictに格納
-    # 文字コードはutf-8固定
+    # 文字コードは固定
     try:
-        replaceListDict = comE.updateDictFromTsv(comE.delQuoteStartEnd(confParser.get('baseset', 'REPLACE_LIST_FILE')), 'utf-8')
+        replaceListDict = comE.updateDictFromTsv(comE.delQuoteStartEnd(confParser.get('baseset', 'REPLACE_LIST_FILE')), common.EditLogConstant.CONF_ENC)
     except Exception as e:
         # 置換リストファイル読み込み処理で何かしらエラーが発生した際はログ出力して終了。主に文字コード周りでのエラーを想定。
         # inputファイルの構成が保障されないので、あらゆるエラーを捕まえてログ出力してから終了させる。

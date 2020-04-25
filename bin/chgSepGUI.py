@@ -1,34 +1,239 @@
-from tkinter import ttk, Tk, messagebox, Menu, Text
+from tkinter import ttk, Tk, messagebox, Menu, Text, filedialog
+from configparser import RawConfigParser
+from os import linesep, chdir, walk, path, getcwd
+from logging import getLogger, FileHandler, StreamHandler, Formatter
+from common import EditLogConstant, EditLogBase, ComChgSep
+from re import sub
+from shutil import copytree
+
 
 
 def open_file():
-    pass
+    load_cfg_file = filedialog.askopenfilename(title="設定ファイル読込", filetypes=[("設定ファイル", "*.conf"), ("全てのファイル", "*.*")])
+    if len(load_cfg_file) != 0 :
+        cfg_parser_read = RawConfigParser()
+        cfg_parser_read.read(load_cfg_file , encoding=EditLogConstant.CONF_ENC)
+
+        # ==========
+        # baseset
+        # ==========
+        work_dir_entry.delete(0, 'end')
+        work_dir_entry.insert(0, cfg_parser_read.get('baseset', 'WORK_DIR'))
+
+        source_dir_entry.delete(0, 'end')
+        source_dir_entry.insert(0, cfg_parser_read.get('baseset', 'SOURCE_DIR'))
+
+        write_dir_entry.delete(0, 'end')
+        write_dir_entry.insert(0, cfg_parser_read.get('baseset', 'WRITE_DIR'))
+
+        memo_text.delete('1.0', 'end')
+        if len(cfg_parser_read.get('baseset', 'MEMO')) != 0 :
+            memo_text.insert(1.0, cfg_parser_read.get('baseset', 'MEMO'))
+
+        # ==========
+        # formatparams
+        # ==========
+        input_encode_entry.delete(0, 'end')
+        input_encode_entry.insert(0, cfg_parser_read.get('formatparams', 'INPUT_ENCODE'))
+
+        output_encode_entry.delete(0, 'end')
+        output_encode_entry.insert(0, cfg_parser_read.get('formatparams', 'OUTPUT_ENCODE'))
+
+        if 0 <= int(cfg_parser_read.get('formatparams', 'INPUT_SEP')) < 3:
+            input_sep_combo.current(int(cfg_parser_read.get('formatparams', 'INPUT_SEP')))
+        else:
+            messagebox.showerror("パラメータエラー", "INPUT_SEPの値が不正です。")
+
+        if 0 <= int(cfg_parser_read.get('formatparams', 'OUTPUT_SEP')) < 3:
+            output_sep_combo.current(int(cfg_parser_read.get('formatparams', 'OUTPUT_SEP')))
+        else:
+            messagebox.showerror("パラメータエラー", "OUTPUT_SEPの値が不正です。")
+
+        if 0 <= int(cfg_parser_read.get('formatparams', 'NEW_LINE')) < 4:
+            new_line_combo.current(int(cfg_parser_read.get('formatparams', 'NEW_LINE')))
+        else:
+            messagebox.showerror("パラメータエラー", "NEW_LINEの値が不正です。")
+
+        if 0 <= int(cfg_parser_read.get('formatparams', 'QUOTE')) < 6:
+            quote_combo.current(int(cfg_parser_read.get('formatparams', 'QUOTE')))
+        else:
+            messagebox.showerror("パラメータエラー", "QUOTEの値が不正です。")
+
+        input_sep_limit_entry.delete(0, 'end')
+        input_sep_limit_entry.insert(0, cfg_parser_read.get('formatparams', 'INPUT_SEP_SPACE_COL_CHG_LIMIT'))
+
+        date_line_regex_entry.delete(0, 'end')
+        date_line_regex_entry.insert(0, cfg_parser_read.get('formatparams', 'DATE_LINE_REGEX'))
+
+        input_date_format_entry.delete(0, 'end')
+        input_date_format_entry.insert(0, cfg_parser_read.get('formatparams', 'INPUT_DATE_FORMAT'))
+
+        output_date_format_entry.delete(0, 'end')
+        output_date_format_entry.insert(0, cfg_parser_read.get('formatparams', 'OUTPUT_DATE_FORMAT'))
+
+        extract_entry.delete(0, 'end')
+        extract_entry.insert(0, cfg_parser_read.get('formatparams', 'EXTRACT_ON_REGEX'))
+
+        # ==========
+        # logging
+        # ==========
+        log_path_entry.delete(0, 'end')
+        log_path_entry.insert(0, cfg_parser_read.get('logging', 'PATH'))
+
+        log_enc_entry.delete(0, 'end')
+        log_enc_entry.insert(0, cfg_parser_read.get('logging', 'ENCODING'))
+
+        log_date_entry.delete(0, 'end')
+        log_date_entry.insert(0, cfg_parser_read.get('logging', 'DATE_FMT'))
+
+        log_fmtconsole_entry.delete(0, 'end')
+        log_fmtconsole_entry.insert(0, cfg_parser_read.get('logging', 'FORMAT_CONSOLE'))
+
+        log_fmtfile_entry.delete(0, 'end')
+        log_fmtfile_entry.insert(0, cfg_parser_read.get('logging', 'FORMAT_FILE'))
 
 
 def save_file():
-    pass
+    cfg_parser_write = RawConfigParser()
+
+    cfg_parser_write.add_section("baseset")
+    cfg_parser_write.set("baseset", "WORK_DIR", work_dir_entry.get())
+    cfg_parser_write.set("baseset", "SOURCE_DIR", source_dir_entry.get())
+    cfg_parser_write.set("baseset", "WRITE_DIR", write_dir_entry.get())
+    cfg_parser_write.set("baseset", "MEMO", memo_text.get("1.0", "end -1c"))
+
+    cfg_parser_write.add_section("formatparams")
+    cfg_parser_write.set("formatparams", "INPUT_ENCODE", input_encode_entry.get())
+    cfg_parser_write.set("formatparams", "OUTPUT_ENCODE", output_encode_entry.get())
+    cfg_parser_write.set("formatparams", "INPUT_SEP", input_sep_combo.current())
+    cfg_parser_write.set("formatparams", "OUTPUT_SEP", output_sep_combo.current())
+    cfg_parser_write.set("formatparams", "NEW_LINE", new_line_combo.current())
+    cfg_parser_write.set("formatparams", "QUOTE", quote_combo.current())
+    cfg_parser_write.set("formatparams", "INPUT_SEP_SPACE_COL_CHG_LIMIT", input_sep_limit_entry.get())
+    cfg_parser_write.set("formatparams", "DATE_LINE_REGEX", date_line_regex_entry.get())
+    cfg_parser_write.set("formatparams", "INPUT_DATE_FORMAT", input_date_format_entry.get())
+    cfg_parser_write.set("formatparams", "OUTPUT_DATE_FORMAT", output_date_format_entry.get())
+    cfg_parser_write.set("formatparams", "EXTRACT_ON_REGEX", extract_entry.get())
+
+    cfg_parser_write.add_section("logging")
+    cfg_parser_write.set("logging", "PATH", log_path_entry.get())
+    cfg_parser_write.set("logging", "ENCODING", log_enc_entry.get())
+    cfg_parser_write.set("logging", "DATE_FMT", log_date_entry.get())
+    cfg_parser_write.set("logging", "FORMAT_CONSOLE", log_fmtconsole_entry.get())
+    cfg_parser_write.set("logging", "FORMAT_FILE", log_fmtfile_entry.get())
+
+    save_cfg_file = filedialog.asksaveasfilename(title="設定をファイルに保存", filetypes=[("設定ファイル", "*.conf"), ("全てのファイル", "*.*")], defaultextension=".conf")
+
+    if len(save_cfg_file) != 0:
+        with open(save_cfg_file, "w", encoding=EditLogConstant.CONF_ENC, newline=linesep) as f:
+            cfg_parser_write.write(f)
 
 
 def change_sep():
-    input_value = input_encode_entry.get()
-    combo_value = input_sep_combo.get()
-    combo_index = input_sep_combo.current()
-    messagebox.showinfo("クリックイベント", input_value + combo_value + str(combo_index) + "が入力されました。")
+
+    # 当処理で共通的に使用するLogger名
+    LOGGER_NAME = 'chg_sep_log'
+
+    # 共通クラスインスタンス取得
+    comE = EditLogBase.EditLogBase()
+    comCS = ComChgSep.ComChgSep()
+
+    from distutils.dir_util import copy_tree
+
+
+    # ワークディレクトリ移動
+    chdir(comE.delQuoteStartEnd(work_dir_entry.get()))
+
+    # print(getcwd())
+
+    logFilePath = log_path_entry.get()
+    logger = getLogger(LOGGER_NAME)
+    # ログレベル設定
+    logger.setLevel(10)
+    # ファイル出力設定
+    logFh = FileHandler(logFilePath, encoding=log_enc_entry.get())
+    logger.addHandler(logFh)
+    # コンソール出力設定
+    logSh = StreamHandler()
+    logger.addHandler(logSh)
+    # 出力形式設定
+    logFormatForStream = Formatter(fmt=log_fmtconsole_entry.get(), datefmt=log_date_entry.get())
+    logFormatForFile = Formatter(fmt=log_fmtfile_entry.get(), datefmt=log_date_entry.get())
+    logSh.setFormatter(logFormatForStream)
+    logFh.setFormatter(logFormatForFile)
+
+
+    # 起動共通
+    comE.start(logger)
+
+    try:
+        # 出力先ディレクトリ作成
+        comE.makeDir(comE.delQuoteStartEnd(write_dir_entry.get()))
+    except Exception as e:
+        logger.exception(e)
+        comE.end_GUI_func(logger)
+        logger.removeHandler(logSh)
+        logger.removeHandler(logFh)
+        return
+
+    # ソースディレクトリのファイルを出力ディレクトリにコピー
+    # 出力先ディレクトリに指定ディレクトリからのディレクトリ構成を再現する
+    copytree(comE.delQuoteStartEnd(source_dir_entry.get()).replace(path.sep, '/'),
+              path.join(comE.delQuoteStartEnd(write_dir_entry.get()),
+                           sub('[:*\?"<>\|]', '', comE.delQuoteStartEnd(source_dir_entry.get()).strip('./\\'))).replace(path.sep, '/'))
+
+
+    for walk_root, dirs, files in walk(comE.delQuoteStartEnd(write_dir_entry.get())):
+        logger.log(20, '処理中ディレクトリ: ')
+        logger.log(20, walk_root.replace('\\', '/'))
+        for file in files:
+            try:
+                # 区切り文字変更
+                comCS.chgSep(LOGGER_NAME,
+                           path.join(walk_root, file).replace(path.sep, '/'),
+                           comE.delQuoteStartEnd(input_encode_entry.get()),
+                           comE.delQuoteStartEnd(output_encode_entry.get()),
+                           comE.delQuoteStartEnd(input_sep_combo.get()),
+                           comE.delQuoteStartEnd(output_sep_combo.get()),
+                           comE.delQuoteStartEnd(new_line_combo.get()),
+                           comE.delQuoteStartEnd(quote_combo.get()),
+                           comE.delQuoteStartEnd(input_sep_limit_entry.get()),
+                           comE.delQuoteStartEnd(date_line_regex_entry.get()),
+                           comE.delQuoteStartEnd(input_date_format_entry.get()),
+                           comE.delQuoteStartEnd(output_date_format_entry.get()),
+                           comE.delQuoteStartEnd(extract_entry.get()))
+
+            except Exception as e:
+                # 何かしらエラーが発生した際はログ出力して終了
+                logger.exception(e)
+                comE.end_GUI_func(logger)
+                logger.removeHandler(logSh)
+                logger.removeHandler(logFh)
+                return
+
+
+    # 終了共通
+    comE.end_GUI_func(logger)
+    logger.removeHandler(logSh)
+    logger.removeHandler(logFh)
+    return
+
 
 
 if __name__ == '__main__':
 
-    root = Tk()
-    root.title('セパレータ変換')
 
-    sep_mn = Menu(root)
+    tk_root = Tk()
+    tk_root.title('セパレータ変換')
+
+    sep_mn = Menu(tk_root)
     sep_mn_cmd = Menu(sep_mn, tearoff=False)
     sep_mn_cmd.add_command(label='開く', command=open_file)
     sep_mn_cmd.add_separator()
     sep_mn_cmd.add_command(label='保存', command=save_file)
     sep_mn.add_cascade(label='設定ファイル', menu=sep_mn_cmd)
 
-    mainFrame = ttk.Frame(root)
+    mainFrame = ttk.Frame(tk_root)
     mainFrame.pack()
 
     frame1 = ttk.Frame(mainFrame)
@@ -230,7 +435,7 @@ DATE_FORMATの形式はpythonのdatetimeに準拠\n\
     log_enc_label.place(x=10, y=60)
     log_enc_entry = ttk.Entry(tab_log, width=5)
     log_enc_entry.place(x=10, y=80)
-    log_enc_entry.insert(0, "utf_8")
+    log_enc_entry.insert(0, EditLogConstant.CONF_ENC)
 
     log_date_label = ttk.Label(tab_log, text="ログ日時フォーマット[DATE_FMT]")
     log_date_label.place(x=10, y=110)
@@ -250,7 +455,6 @@ DATE_FORMATの形式はpythonのdatetimeに準拠\n\
     log_fmtfile_entry.place(x=10, y=230)
     log_fmtfile_entry.insert(0, '"%(asctime)s"	"%(msecs)d"	"%(name)s"	"%(levelname)s"	"%(lineno)d"	"%(message)s"')
 
-
     frame3 = ttk.Frame(mainFrame)
     frame3['height'] = 160
     frame3['width'] = 550
@@ -266,7 +470,7 @@ DATE_FORMATの形式はpythonのdatetimeに準拠\n\
     exe_change_btn = ttk.Button(frame3, text="変換実行", command=change_sep)
     exe_change_btn.place(x=460, y=120)
 
-    root.config(menu=sep_mn)
-    root.resizable(width=False, height=False)
-    root.mainloop()
+    tk_root.config(menu=sep_mn)
+    tk_root.resizable(width=False, height=False)
+    tk_root.mainloop()
 

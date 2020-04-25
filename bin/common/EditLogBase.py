@@ -1,14 +1,12 @@
 import os
 import sys
-import logging
-import csv
-import shutil
-import re
+from logging import getLogger
+from csv import reader
+from shutil import copy, move
+from re import sub, match, search
 from collections import OrderedDict
-from distutils.dir_util import copy_tree
+from distutils.dir_util import copy_tree, remove_tree
 from datetime import datetime
-# importの指定は当ファイルからではなく実行ファイルのディレクトリからの相対で指定
-import common.EditLogLogging
 
 class EditLogBase:
 
@@ -25,22 +23,47 @@ class EditLogBase:
         logger.log(20, '---end--------------------')
         sys.exit()
 
+    # 終了処理
+    def end_GUI_func(self, logger):
+        logger.log(20, '---end--------------------')
+
+
     # クリーンなディレクトリ作成
     def makeDir(self, path):
         # 出力先ディレクトリ存在確認
         if os.path.isdir(path):
             # 　設定誤り等により、意図しないディレクトリを誤って削除してしまうことを防止するため、自動削除しません。
-            # shutil.rmtree(path)
+            # rmtree(path)
             # raise RuntimeError(''.join(['出力先ディレクトリが存在しています。手動で削除してください。',path]))
             # →消すの面倒だしmoveにしようかな・・・
             while True:
-                addPath = ''.join([re.sub(r'[/\\]+$', '', path), datetime.now().strftime("_%Y%m%d%H%M%S%f")])
+                addPath = ''.join([sub(r'[/\\]+$', '', path), datetime.now().strftime("_%Y%m%d%H%M%S%f")])
                 if not os.path.isdir(addPath):
-                    shutil.move(path, addPath)
+                    move(path, addPath)
                     break
 
         # 出力先ディレクトリ作成
         os.makedirs(path)
+
+    # クリーンなディレクトリ作成
+    def makeDirDistutils(self, path):
+        # 出力先ディレクトリ存在確認
+        if os.path.isdir(path):
+            # 　設定誤り等により、意図しないディレクトリを誤って削除してしまうことを防止するため、自動削除しません。
+            # rmtree(path)
+            # raise RuntimeError(''.join(['出力先ディレクトリが存在しています。手動で削除してください。',path]))
+            # →消すの面倒だしmoveにしようかな・・・
+            while True:
+                addPath = ''.join([sub(r'[/\\]+$', '', path), datetime.now().strftime("_%Y%m%d%H%M%S%f")])
+                if not os.path.isdir(addPath):
+                    copy_tree(path, addPath)
+                    remove_tree(path)
+                    break
+
+        # 出力先ディレクトリ作成
+        os.makedirs(path)
+
+
 
     # tsvファイルの内容をOrderedDictに格納
     # tsvファイルの列数は2固定
@@ -50,7 +73,7 @@ class EditLogBase:
         kvDict = OrderedDict()
 
         with open(tsvFilePath, newline='', encoding=enc) as f:
-            reader = csv.reader(f, delimiter='\t')
+            reader = reader(f, delimiter='\t')
             for row in reader:
                 kvDict.update({row[0]:row[1]})
 
@@ -58,16 +81,16 @@ class EditLogBase:
 
     # ディレクトリ階層構造を維持した状態でファイルをコピーする。
     def copyFileAsTree(self, root, file, writeDir):
-        dirName = os.path.join(writeDir, re.sub('[:*\?"<>\|]', '', root.strip('./\\'))).replace(os.path.sep, '/')
+        dirName = os.path.join(writeDir, sub('[:*\?"<>\|]', '', root.strip('./\\'))).replace(os.path.sep, '/')
         sourceFileName = os.path.join(root, file).replace(os.path.sep, '/')
         resultFileName = os.path.join(writeDir,
-                                      re.sub('[:*\?"<>\|]', '', root.strip('./\\')),
+                                      sub('[:*\?"<>\|]', '', root.strip('./\\')),
                                       file).replace(os.path.sep, '/')
 
         # ディレクトリ作成
         os.makedirs(dirName, exist_ok=True)
         # ファイルコピー
-        shutil.copy(sourceFileName, resultFileName)
+        copy(sourceFileName, resultFileName)
 
         return resultFileName
 
@@ -75,7 +98,7 @@ class EditLogBase:
     def copyTreeAll(self, root, writeDir):
         copy_tree(root.replace(os.path.sep, '/'),
                   os.path.join(writeDir,
-                               re.sub('[:*\?"<>\|]', '', root.strip('./\\'))).replace(os.path.sep, '/'))
+                               sub('[:*\?"<>\|]', '', root.strip('./\\'))).replace(os.path.sep, '/'))
 
     # 改行コード置換
     def replaceNewLine(self, targetStr, nl):
@@ -83,23 +106,23 @@ class EditLogBase:
         if nl == 'CRLF':
             if strend == '\r\n':
                 pass
-            elif re.match('[^\r]\n', strend):
+            elif match('[^\r]\n', strend):
                 targetStr = targetStr.replace('\n', '\r\n')
-            elif re.match('.\r', strend):
+            elif match('.\r', strend):
                 targetStr = targetStr.replace('\r', '\r\n')
         elif nl == 'LF':
             if strend == "\r\n":
                 targetStr = targetStr.replace('\r\n', '\n')
-            elif re.match('[^\r]\n', strend):
+            elif match('[^\r]\n', strend):
                 pass
-            elif re.match('.\r', strend):
+            elif match('.\r', strend):
                 targetStr = targetStr.replace('\r', '\n')
         elif nl == 'CR':
             if strend == "\r\n":
                 targetStr = targetStr.replace('\r\n', '\r')
-            elif re.match('[^\r]\n', strend):
+            elif match('[^\r]\n', strend):
                 targetStr = targetStr.replace('\n', '\r')
-            elif re.match('.\r', strend):
+            elif match('.\r', strend):
                 pass
         else:
             pass
@@ -112,27 +135,27 @@ class EditLogBase:
         if nl == 'CRLF':
             if strend == '\r\n':
                 pass
-            elif re.match('[^\r]\n', strend):
+            elif match('[^\r]\n', strend):
                 targetStr = targetStr.replace('\n', '\r\n')
-            elif re.match('.\r', strend):
+            elif match('.\r', strend):
                 targetStr = targetStr.replace('\r', '\r\n')
             else:
                 targetStr = ''.join([targetStr, '\r\n'])
         elif nl == 'LF':
             if strend == "\r\n":
                 targetStr = targetStr.replace('\r\n', '\n')
-            elif re.match('[^\r]\n', strend):
+            elif match('[^\r]\n', strend):
                 pass
-            elif re.match('.\r', strend):
+            elif match('.\r', strend):
                 targetStr = targetStr.replace('\r', '\n')
             else:
                 targetStr = ''.join([str, '\n'])
         elif nl == 'CR':
             if strend == "\r\n":
                 targetStr = targetStr.replace('\r\n', '\r')
-            elif re.match('[^\r]\n', strend):
+            elif match('[^\r]\n', strend):
                 targetStr = targetStr.replace('\n', '\r')
-            elif re.match('.\r', strend):
+            elif match('.\r', strend):
                 pass
             else:
                 targetStr = ''.join([str, '\r'])
@@ -149,9 +172,9 @@ class EditLogBase:
         strend = targetStr[-2:]
         if strend == '\r\n':
             nlCode = 'CRLF'
-        elif re.match('[^\r]\n', strend):
+        elif match('[^\r]\n', strend):
             nlCode = 'LF'
-        elif re.match('.\r', strend):
+        elif match('.\r', strend):
             nlCode = 'CR'
         else:
             pass
@@ -164,9 +187,9 @@ class EditLogBase:
         strend = targetStr[-2:]
         if strend == '\r\n':
             targetStr = targetStr.replace('\r\n', '')
-        elif re.match('[^\r]\n', strend):
+        elif match('[^\r]\n', strend):
             targetStr = targetStr.replace('\n', '')
-        elif re.match('.\r', strend):
+        elif match('.\r', strend):
             targetStr = targetStr.replace('\r', '')
         else:
             pass
@@ -176,13 +199,13 @@ class EditLogBase:
     # 文字列両端クォート除去
     # stripを使用すべきかreで行くか悩み中
     def delQuoteStartEnd(self, targetStr):
-        targetStr = re.sub('(^["\']|["\']$)', '', targetStr)
+        targetStr = sub('(^["\']|["\']$)', '', targetStr)
         return targetStr
 
     # 相対パスは絶対パスに変換
     # 絶対パスはそのまま
     def chgRel2AbsPath(self, targetpath, basefilepath, addRel):
-        if re.match('^(\.\./|\./)', targetpath):
+        if match('^(\.\./|\./)', targetpath):
             targetpath = ''.join([os.path.dirname(basefilepath), addRel, targetpath])
             targetpath = self.cutDDot(targetpath)
         else:
@@ -191,15 +214,14 @@ class EditLogBase:
 
     # パス内の[foo/../]を再帰的に除去
     def cutDDot(self, targetpath):
-        if re.search(r'[^/\\]+[/\\]\.\.[\\/]', targetpath):
-            targetpath = self.cutDDot(re.sub(r'[^/\\]+[/\\]\.\.[\\/]', '', targetpath))
+        if search(r'[^/\\]+[/\\]\.\.[\\/]', targetpath):
+            targetpath = self.cutDDot(sub(r'[^/\\]+[/\\]\.\.[\\/]', '', targetpath))
         return targetpath
 
     # エンコード不可文字を●で塗りつぶしつつファイル書き込み
     def replaceEncErrorWrite(self, loggername, filePath, i, tf, lineReplaced, inenc, outenc):
 
-        logger = logging.getLogger(''.join([loggername, '.', re.sub('\.[^/\\\.]*', '', os.path.basename(__file__))]))
-        comR = common.EditLogBase.EditLogBase()
+        logger = getLogger(''.join([loggername, '.', sub('\.[^/\\\.]*', '', os.path.basename(__file__))]))
 
         try:
             tf.write(lineReplaced.encode(outenc))
@@ -214,11 +236,11 @@ class EditLogBase:
             # tf.write(lineReplaced.encode(inenc))
 
             # エラー文字列からデコード不可文字を取得して置換。エラー文言の仕様が変更される可能性を考えると微妙な処理だが・・・
-            colList = re.search(r"'\\u[^']+'", str(e)).group().split(r'\u')
+            colList = search(r"'\\u[^']+'", str(e)).group().split(r'\u')
             for col in colList:
-                col = comR.delQuoteStartEnd(col)
+                col = self.delQuoteStartEnd(col)
                 if col != '':
-                    lineReplaced = re.sub(chr(int(col, 16)), '●', lineReplaced)
+                    lineReplaced = sub(chr(int(col, 16)), '●', lineReplaced)
                     self.replaceEncErrorWrite(loggername, filePath, i, tf, lineReplaced, inenc, outenc)
 
         return lineReplaced
