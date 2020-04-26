@@ -7,8 +7,10 @@ from re import sub
 from shutil import copytree
 from traceback import format_exc
 
+load_cfg_file = ''
 
 def open_file():
+    global load_cfg_file
     load_cfg_file = filedialog.askopenfilename(title="設定ファイル読込", filetypes=[("設定ファイル", "*.conf"), ("全てのファイル", "*.*")])
     if len(load_cfg_file) != 0 :
         cfg_parser_read = RawConfigParser()
@@ -94,6 +96,8 @@ def open_file():
 
 
 def save_file():
+    global load_cfg_file
+
     cfg_parser_write = RawConfigParser()
 
     cfg_parser_write.add_section("baseset")
@@ -122,7 +126,7 @@ def save_file():
     cfg_parser_write.set("logging", "FORMAT_CONSOLE", log_fmtconsole_entry.get())
     cfg_parser_write.set("logging", "FORMAT_FILE", log_fmtfile_entry.get())
 
-    save_cfg_file = filedialog.asksaveasfilename(title="設定をファイルに保存", filetypes=[("設定ファイル", "*.conf"), ("全てのファイル", "*.*")], defaultextension=".conf")
+    save_cfg_file = filedialog.asksaveasfilename(title="設定をファイルに保存", filetypes=[("設定ファイル", "*.conf"), ("全てのファイル", "*.*")], defaultextension=".conf", initialfile=load_cfg_file)
 
     if len(save_cfg_file) != 0:
         with open(save_cfg_file, "w", encoding=EditLogConstant.CONF_ENC, newline=linesep) as f:
