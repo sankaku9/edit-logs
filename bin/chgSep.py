@@ -82,7 +82,7 @@ if __name__ == '__main__':
         for file in files:
             try:
                 # 区切り文字変更
-                comCS.chgSep(LOGGER_NAME,
+                comCS.chg_sep(LOGGER_NAME,
                            os.path.join(root, file).replace(os.path.sep, '/'),
                            tmp_input_encode,
                            tmp_output_encode,

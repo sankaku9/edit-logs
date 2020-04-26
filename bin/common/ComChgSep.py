@@ -10,7 +10,7 @@ class ComChgSep:
         pass
 
     # 区切り文字変更
-    def chgSep(self, loggername, filePath, inenc, outenc, insep, outsep, nl, quote, spaceChgLim, dateRegex, indateform, outdateform, extregex):
+    def chg_sep(self, loggername, filePath, inenc, outenc, insep, outsep, nl, quote, spaceChgLim, dateRegex, indateform, outdateform, extregex):
 
         # 入力値チェック
         insepList = ['COMMA','TAB','SPACE']

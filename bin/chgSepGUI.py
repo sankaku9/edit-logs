@@ -5,6 +5,7 @@ from logging import getLogger, FileHandler, StreamHandler, Formatter
 from common import EditLogConstant, EditLogBase, ComChgSep
 from re import sub
 from shutil import copytree
+from traceback import format_exc
 
 
 def open_file():
@@ -130,84 +131,102 @@ def save_file():
 
 def change_sep():
 
-    loggerNL = []
+    messagebox.showinfo("処理の開始", "変換処理を開始します。")
+
+    # loggerのHandler格納用。終了共通処理の引数向け
+    logger_nl = []
 
     # 当処理で共通的に使用するLogger名
     LOGGER_NAME = 'chg_sep_log'
 
     # 共通クラスインスタンス取得
-    comE = EditLogBase.EditLogBase()
-    comCS = ComChgSep.ComChgSep()
+    com_elb = EditLogBase.EditLogBase()
+    com_cs = ComChgSep.ComChgSep()
 
-    # ワークディレクトリ移動
-    chdir(comE.delQuoteStartEnd(work_dir_entry.get()))
+    try:
+        # ワークディレクトリ移動
+        chdir(com_elb.delQuoteStartEnd(work_dir_entry.get()))
+    except Exception as e:
+        print(format_exc())
+        messagebox.showerror("エラー終了", "パス > ワークディレクトリ[WORK_DIR] " + com_elb.delQuoteStartEnd(work_dir_entry.get()) + "への移動に失敗しました。")
+        return
 
-    logFilePath = log_path_entry.get()
     logger = getLogger(LOGGER_NAME)
     # ログレベル設定
     logger.setLevel(11)
-    # ファイル出力設定
-    logFh = FileHandler(logFilePath, encoding=log_enc_entry.get())
-    logger.addHandler(logFh)
-    loggerNL.append(logFh)
+    try:
+        # ファイル出力設定
+        log_fh = FileHandler(log_path_entry.get(), encoding=log_enc_entry.get())
+    except LookupError as e:
+        print(format_exc())
+        messagebox.showerror("エラー終了", "ログ > ログ文字コード[ENCODING] " + log_enc_entry.get() + "は不正です。")
+        return
+    except Exception as e:
+        print(format_exc())
+        messagebox.showerror("エラー終了", "ログ > ログ出力パス[PATH] " + log_path_entry.get() + "には出力できません。")
+        return
+
+    logger.addHandler(log_fh)
+    logger_nl.append(log_fh)
     # コンソール出力設定
-    logSh = StreamHandler()
-    logger.addHandler(logSh)
-    loggerNL.append(logSh)
+    log_sh = StreamHandler()
+    logger.addHandler(log_sh)
+    logger_nl.append(log_sh)
     # 出力形式設定
-    logFormatForStream = Formatter(fmt=log_fmtconsole_entry.get(), datefmt=log_date_entry.get())
-    logFormatForFile = Formatter(fmt=log_fmtfile_entry.get(), datefmt=log_date_entry.get())
-    logSh.setFormatter(logFormatForStream)
-    logFh.setFormatter(logFormatForFile)
+    log_format_for_stream = Formatter(fmt=log_fmtconsole_entry.get(), datefmt=log_date_entry.get())
+    log_format_for_file = Formatter(fmt=log_fmtfile_entry.get(), datefmt=log_date_entry.get())
+    log_sh.setFormatter(log_format_for_stream)
+    log_fh.setFormatter(log_format_for_file)
 
     # 起動共通
-    comE.start(logger)
+    com_elb.start(logger)
 
     try:
         # 出力先ディレクトリ作成
-        comE.makeDir(comE.delQuoteStartEnd(write_dir_entry.get()))
+        com_elb.makeDir(com_elb.delQuoteStartEnd(write_dir_entry.get()))
+
+        # ソースディレクトリのファイルを出力ディレクトリにコピー
+        # 出力先ディレクトリに指定ディレクトリからのディレクトリ構成を再現する
+        copytree(com_elb.delQuoteStartEnd(source_dir_entry.get()).replace(path.sep, '/'),
+                  path.join(com_elb.delQuoteStartEnd(write_dir_entry.get()),
+                               sub('[:*\?"<>\|]', '', com_elb.delQuoteStartEnd(source_dir_entry.get()).strip('./\\'))).replace(path.sep, '/'))
     except Exception as e:
-        logger.exception(e)
-        comE.end_GUI_func(logger, loggerNL)
+        logger.exception(format_exc(e))
+        com_elb.end_gui_func(logger, logger_nl)
+        messagebox.showerror("エラー終了", "[WRITE_DIR] " + com_elb.delQuoteStartEnd(write_dir_entry.get()) + "の作成に失敗しました。")
         return
 
-    # ソースディレクトリのファイルを出力ディレクトリにコピー
-    # 出力先ディレクトリに指定ディレクトリからのディレクトリ構成を再現する
-    copytree(comE.delQuoteStartEnd(source_dir_entry.get()).replace(path.sep, '/'),
-              path.join(comE.delQuoteStartEnd(write_dir_entry.get()),
-                           sub('[:*\?"<>\|]', '', comE.delQuoteStartEnd(source_dir_entry.get()).strip('./\\'))).replace(path.sep, '/'))
-
-    for walk_root, dirs, files in walk(comE.delQuoteStartEnd(write_dir_entry.get())):
-        logger.log(20, '処理中ディレクトリ: ')
-        logger.log(20, walk_root.replace('\\', '/'))
-        for drctr in dirs:
-            logger.log(10, '処理ディレクトリ詳細: ')
-            logger.log(10, drctr.replace('\\', '/'))
-            for file in files:
-                try:
-                    # 区切り文字変更
-                    comCS.chgSep(LOGGER_NAME,
-                               path.join(walk_root, file).replace(path.sep, '/'),
-                               comE.delQuoteStartEnd(input_encode_entry.get()),
-                               comE.delQuoteStartEnd(output_encode_entry.get()),
-                               comE.delQuoteStartEnd(input_sep_combo.get()),
-                               comE.delQuoteStartEnd(output_sep_combo.get()),
-                               comE.delQuoteStartEnd(new_line_combo.get()),
-                               comE.delQuoteStartEnd(quote_combo.get()),
-                               comE.delQuoteStartEnd(input_sep_limit_entry.get()),
-                               comE.delQuoteStartEnd(date_line_regex_entry.get()),
-                               comE.delQuoteStartEnd(input_date_format_entry.get()),
-                               comE.delQuoteStartEnd(output_date_format_entry.get()),
-                               comE.delQuoteStartEnd(extract_entry.get()))
-
-                except Exception as e:
-                    # 何かしらエラーが発生した際はログ出力して終了
-                    logger.exception(e)
-                    comE.end_GUI_func(logger, loggerNL)
-                    return
+    try:
+        for walk_root, dirs, files in walk(com_elb.delQuoteStartEnd(write_dir_entry.get())):
+            logger.log(20, '処理中ディレクトリ: ')
+            logger.log(20, walk_root.replace('\\', '/'))
+            for drctr in dirs:
+                logger.log(10, '処理ディレクトリ詳細: ')
+                logger.log(10, drctr.replace('\\', '/'))
+                for file in files:
+                        # 区切り文字変更
+                        com_cs.chg_sep(LOGGER_NAME,
+                                   path.join(walk_root, file).replace(path.sep, '/'),
+                                   com_elb.delQuoteStartEnd(input_encode_entry.get()),
+                                   com_elb.delQuoteStartEnd(output_encode_entry.get()),
+                                   com_elb.delQuoteStartEnd(input_sep_combo.get()),
+                                   com_elb.delQuoteStartEnd(output_sep_combo.get()),
+                                   com_elb.delQuoteStartEnd(new_line_combo.get()),
+                                   com_elb.delQuoteStartEnd(quote_combo.get()),
+                                   com_elb.delQuoteStartEnd(input_sep_limit_entry.get()),
+                                   com_elb.delQuoteStartEnd(date_line_regex_entry.get()),
+                                   com_elb.delQuoteStartEnd(input_date_format_entry.get()),
+                                   com_elb.delQuoteStartEnd(output_date_format_entry.get()),
+                                   com_elb.delQuoteStartEnd(extract_entry.get()))
+    except Exception as e:
+        logger.exception(format_exc(e))
+        com_elb.end_gui_func(logger, logger_nl)
+        messagebox.showerror("エラー終了", "変換中にエラーが発生しました。")
+        return
 
     # 終了共通
-    comE.end_GUI_func(logger, loggerNL)
+    com_elb.end_gui_func(logger, logger_nl)
+    messagebox.showinfo("処理の終了", "変換処理が正常に完了しました。")
     return
 
 
@@ -223,17 +242,17 @@ if __name__ == '__main__':
     sep_mn_cmd.add_command(label='保存', command=save_file)
     sep_mn.add_cascade(label='設定ファイル', menu=sep_mn_cmd)
 
-    mainFrame = ttk.Frame(tk_root)
-    mainFrame.pack()
+    main_frame = ttk.Frame(tk_root)
+    main_frame.pack()
 
-    frame1 = ttk.Frame(mainFrame)
-    frame1['height'] = 600
-    frame1['width'] = 550
-    frame1['relief'] = 'flat'
-    frame1['borderwidth'] = 1
-    frame1.grid(row=1, column=0)
+    center_frame = ttk.Frame(main_frame)
+    center_frame['height'] = 600
+    center_frame['width'] = 550
+    center_frame['relief'] = 'flat'
+    center_frame['borderwidth'] = 1
+    center_frame.grid(row=1, column=0)
 
-    main_nb = ttk.Notebook(frame1, width=535, height=562)
+    main_nb = ttk.Notebook(center_frame, width=535, height=562)
     tab_change = ttk.Frame(main_nb)
     tab_quote = ttk.Frame(main_nb)
     tab_tgtlimit = ttk.Frame(main_nb)
@@ -445,19 +464,19 @@ DATE_FORMATの形式はpythonのdatetimeに準拠\n\
     log_fmtfile_entry.place(x=10, y=230)
     log_fmtfile_entry.insert(0, '"%(asctime)s"	"%(msecs)d"	"%(name)s"	"%(levelname)s"	"%(lineno)d"	"%(message)s"')
 
-    frame3 = ttk.Frame(mainFrame)
-    frame3['height'] = 160
-    frame3['width'] = 550
-    frame3['relief'] = 'flat'
-    frame3['borderwidth'] = 5
-    frame3.grid(row=2, column=0)
+    bottom_frame = ttk.Frame(main_frame)
+    bottom_frame['height'] = 160
+    bottom_frame['width'] = 550
+    bottom_frame['relief'] = 'flat'
+    bottom_frame['borderwidth'] = 5
+    bottom_frame.grid(row=2, column=0)
 
-    memo_label = ttk.Label(frame3, text="メモ")
+    memo_label = ttk.Label(bottom_frame, text="メモ")
     memo_label.place(x=5, y=0)
-    memo_text = Text(frame3, width=75, height=5)
+    memo_text = Text(bottom_frame, width=75, height=5)
     memo_text.place(x=5, y=18)
 
-    exe_change_btn = ttk.Button(frame3, text="変換実行", command=change_sep)
+    exe_change_btn = ttk.Button(bottom_frame, text="変換実行", command=change_sep)
     exe_change_btn.place(x=460, y=120)
 
     tk_root.config(menu=sep_mn)
