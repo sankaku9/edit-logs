@@ -47,26 +47,6 @@ class EditLogBase:
         # 出力先ディレクトリ作成
         os.makedirs(path)
 
-    # クリーンなディレクトリ作成
-    def makeDirDistutils(self, path):
-        # 出力先ディレクトリ存在確認
-        if os.path.isdir(path):
-            # 　設定誤り等により、意図しないディレクトリを誤って削除してしまうことを防止するため、自動削除しません。
-            # rmtree(path)
-            # raise RuntimeError(''.join(['出力先ディレクトリが存在しています。手動で削除してください。',path]))
-            # →消すの面倒だしmoveにしようかな・・・
-            while True:
-                addPath = ''.join([sub(r'[/\\]+$', '', path), datetime.now().strftime("_%Y%m%d%H%M%S%f")])
-                if not os.path.isdir(addPath):
-                    copy_tree(path, addPath)
-                    remove_tree(path)
-                    break
-
-        # 出力先ディレクトリ作成
-        os.makedirs(path)
-
-
-
     # tsvファイルの内容をOrderedDictに格納
     # tsvファイルの列数は2固定
     # return : dict : collections.OrderedDict
@@ -75,8 +55,8 @@ class EditLogBase:
         kvDict = OrderedDict()
 
         with open(tsvFilePath, newline='', encoding=enc) as f:
-            reader = reader(f, delimiter='\t')
-            for row in reader:
+            tsv_reader = reader(f, delimiter='\t')
+            for row in tsv_reader:
                 kvDict.update({row[0]:row[1]})
 
         return kvDict

@@ -200,24 +200,21 @@ def change_sep():
         for walk_root, dirs, files in walk(com_elb.delQuoteStartEnd(write_dir_entry.get())):
             logger.log(20, '処理中ディレクトリ: ')
             logger.log(20, walk_root.replace('\\', '/'))
-            for drctr in dirs:
-                logger.log(10, '処理ディレクトリ詳細: ')
-                logger.log(10, drctr.replace('\\', '/'))
-                for file in files:
-                        # 区切り文字変更
-                        com_cs.chg_sep(LOGGER_NAME,
-                                   path.join(walk_root, file).replace(path.sep, '/'),
-                                   com_elb.delQuoteStartEnd(input_encode_entry.get()),
-                                   com_elb.delQuoteStartEnd(output_encode_entry.get()),
-                                   com_elb.delQuoteStartEnd(input_sep_combo.get()),
-                                   com_elb.delQuoteStartEnd(output_sep_combo.get()),
-                                   com_elb.delQuoteStartEnd(new_line_combo.get()),
-                                   com_elb.delQuoteStartEnd(quote_combo.get()),
-                                   com_elb.delQuoteStartEnd(input_sep_limit_entry.get()),
-                                   com_elb.delQuoteStartEnd(date_line_regex_entry.get()),
-                                   com_elb.delQuoteStartEnd(input_date_format_entry.get()),
-                                   com_elb.delQuoteStartEnd(output_date_format_entry.get()),
-                                   com_elb.delQuoteStartEnd(extract_entry.get()))
+            for file in files:
+                    # 区切り文字変更
+                    com_cs.chg_sep(LOGGER_NAME,
+                               path.join(walk_root, file).replace(path.sep, '/'),
+                               com_elb.delQuoteStartEnd(input_encode_entry.get()),
+                               com_elb.delQuoteStartEnd(output_encode_entry.get()),
+                               com_elb.delQuoteStartEnd(input_sep_combo.get()),
+                               com_elb.delQuoteStartEnd(output_sep_combo.get()),
+                               com_elb.delQuoteStartEnd(new_line_combo.get()),
+                               com_elb.delQuoteStartEnd(quote_combo.get()),
+                               com_elb.delQuoteStartEnd(input_sep_limit_entry.get()),
+                               com_elb.delQuoteStartEnd(date_line_regex_entry.get()),
+                               com_elb.delQuoteStartEnd(input_date_format_entry.get()),
+                               com_elb.delQuoteStartEnd(output_date_format_entry.get()),
+                               com_elb.delQuoteStartEnd(extract_entry.get()))
     except Exception as e:
         logger.exception(format_exc(e))
         com_elb.end_gui_func(logger, logger_nl)

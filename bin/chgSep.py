@@ -11,6 +11,7 @@ import logging
 import configparser
 import common.EditLogBase
 import common.EditLogLogging
+import common.EditLogConstant
 import common.ComChgSep
 
 if __name__ == '__main__':
