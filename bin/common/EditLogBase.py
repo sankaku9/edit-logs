@@ -24,8 +24,10 @@ class EditLogBase:
         sys.exit()
 
     # 終了処理
-    def end_GUI_func(self, logger):
+    def end_GUI_func(self, logger, loggerNL):
         logger.log(20, '---end--------------------')
+        for loggerName in loggerNL:
+            logger.removeHandler(loggerName)
 
 
     # クリーンなディレクトリ作成

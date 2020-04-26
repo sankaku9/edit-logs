@@ -1,11 +1,10 @@
 from tkinter import ttk, Tk, messagebox, Menu, Text, filedialog
 from configparser import RawConfigParser
-from os import linesep, chdir, walk, path, getcwd
+from os import linesep, chdir, walk, path
 from logging import getLogger, FileHandler, StreamHandler, Formatter
 from common import EditLogConstant, EditLogBase, ComChgSep
 from re import sub
 from shutil import copytree
-
 
 
 def open_file():
@@ -39,24 +38,24 @@ def open_file():
         output_encode_entry.delete(0, 'end')
         output_encode_entry.insert(0, cfg_parser_read.get('formatparams', 'OUTPUT_ENCODE'))
 
-        if 0 <= int(cfg_parser_read.get('formatparams', 'INPUT_SEP')) < 3:
+        try:
             input_sep_combo.current(int(cfg_parser_read.get('formatparams', 'INPUT_SEP')))
-        else:
+        except:
             messagebox.showerror("パラメータエラー", "INPUT_SEPの値が不正です。")
 
-        if 0 <= int(cfg_parser_read.get('formatparams', 'OUTPUT_SEP')) < 3:
+        try:
             output_sep_combo.current(int(cfg_parser_read.get('formatparams', 'OUTPUT_SEP')))
-        else:
+        except:
             messagebox.showerror("パラメータエラー", "OUTPUT_SEPの値が不正です。")
 
-        if 0 <= int(cfg_parser_read.get('formatparams', 'NEW_LINE')) < 4:
+        try:
             new_line_combo.current(int(cfg_parser_read.get('formatparams', 'NEW_LINE')))
-        else:
+        except:
             messagebox.showerror("パラメータエラー", "NEW_LINEの値が不正です。")
 
-        if 0 <= int(cfg_parser_read.get('formatparams', 'QUOTE')) < 6:
+        try:
             quote_combo.current(int(cfg_parser_read.get('formatparams', 'QUOTE')))
-        else:
+        except:
             messagebox.showerror("パラメータエラー", "QUOTEの値が不正です。")
 
         input_sep_limit_entry.delete(0, 'end')
@@ -131,6 +130,8 @@ def save_file():
 
 def change_sep():
 
+    loggerNL = []
+
     # 当処理で共通的に使用するLogger名
     LOGGER_NAME = 'chg_sep_log'
 
@@ -138,30 +139,26 @@ def change_sep():
     comE = EditLogBase.EditLogBase()
     comCS = ComChgSep.ComChgSep()
 
-    from distutils.dir_util import copy_tree
-
-
     # ワークディレクトリ移動
     chdir(comE.delQuoteStartEnd(work_dir_entry.get()))
-
-    # print(getcwd())
 
     logFilePath = log_path_entry.get()
     logger = getLogger(LOGGER_NAME)
     # ログレベル設定
-    logger.setLevel(10)
+    logger.setLevel(11)
     # ファイル出力設定
     logFh = FileHandler(logFilePath, encoding=log_enc_entry.get())
     logger.addHandler(logFh)
+    loggerNL.append(logFh)
     # コンソール出力設定
     logSh = StreamHandler()
     logger.addHandler(logSh)
+    loggerNL.append(logSh)
     # 出力形式設定
     logFormatForStream = Formatter(fmt=log_fmtconsole_entry.get(), datefmt=log_date_entry.get())
     logFormatForFile = Formatter(fmt=log_fmtfile_entry.get(), datefmt=log_date_entry.get())
     logSh.setFormatter(logFormatForStream)
     logFh.setFormatter(logFormatForFile)
-
 
     # 起動共通
     comE.start(logger)
@@ -171,9 +168,7 @@ def change_sep():
         comE.makeDir(comE.delQuoteStartEnd(write_dir_entry.get()))
     except Exception as e:
         logger.exception(e)
-        comE.end_GUI_func(logger)
-        logger.removeHandler(logSh)
-        logger.removeHandler(logFh)
+        comE.end_GUI_func(logger, loggerNL)
         return
 
     # ソースディレクトリのファイルを出力ディレクトリにコピー
@@ -182,46 +177,41 @@ def change_sep():
               path.join(comE.delQuoteStartEnd(write_dir_entry.get()),
                            sub('[:*\?"<>\|]', '', comE.delQuoteStartEnd(source_dir_entry.get()).strip('./\\'))).replace(path.sep, '/'))
 
-
     for walk_root, dirs, files in walk(comE.delQuoteStartEnd(write_dir_entry.get())):
         logger.log(20, '処理中ディレクトリ: ')
         logger.log(20, walk_root.replace('\\', '/'))
-        for file in files:
-            try:
-                # 区切り文字変更
-                comCS.chgSep(LOGGER_NAME,
-                           path.join(walk_root, file).replace(path.sep, '/'),
-                           comE.delQuoteStartEnd(input_encode_entry.get()),
-                           comE.delQuoteStartEnd(output_encode_entry.get()),
-                           comE.delQuoteStartEnd(input_sep_combo.get()),
-                           comE.delQuoteStartEnd(output_sep_combo.get()),
-                           comE.delQuoteStartEnd(new_line_combo.get()),
-                           comE.delQuoteStartEnd(quote_combo.get()),
-                           comE.delQuoteStartEnd(input_sep_limit_entry.get()),
-                           comE.delQuoteStartEnd(date_line_regex_entry.get()),
-                           comE.delQuoteStartEnd(input_date_format_entry.get()),
-                           comE.delQuoteStartEnd(output_date_format_entry.get()),
-                           comE.delQuoteStartEnd(extract_entry.get()))
+        for drctr in dirs:
+            logger.log(10, '処理ディレクトリ詳細: ')
+            logger.log(10, drctr.replace('\\', '/'))
+            for file in files:
+                try:
+                    # 区切り文字変更
+                    comCS.chgSep(LOGGER_NAME,
+                               path.join(walk_root, file).replace(path.sep, '/'),
+                               comE.delQuoteStartEnd(input_encode_entry.get()),
+                               comE.delQuoteStartEnd(output_encode_entry.get()),
+                               comE.delQuoteStartEnd(input_sep_combo.get()),
+                               comE.delQuoteStartEnd(output_sep_combo.get()),
+                               comE.delQuoteStartEnd(new_line_combo.get()),
+                               comE.delQuoteStartEnd(quote_combo.get()),
+                               comE.delQuoteStartEnd(input_sep_limit_entry.get()),
+                               comE.delQuoteStartEnd(date_line_regex_entry.get()),
+                               comE.delQuoteStartEnd(input_date_format_entry.get()),
+                               comE.delQuoteStartEnd(output_date_format_entry.get()),
+                               comE.delQuoteStartEnd(extract_entry.get()))
 
-            except Exception as e:
-                # 何かしらエラーが発生した際はログ出力して終了
-                logger.exception(e)
-                comE.end_GUI_func(logger)
-                logger.removeHandler(logSh)
-                logger.removeHandler(logFh)
-                return
-
+                except Exception as e:
+                    # 何かしらエラーが発生した際はログ出力して終了
+                    logger.exception(e)
+                    comE.end_GUI_func(logger, loggerNL)
+                    return
 
     # 終了共通
-    comE.end_GUI_func(logger)
-    logger.removeHandler(logSh)
-    logger.removeHandler(logFh)
+    comE.end_GUI_func(logger, loggerNL)
     return
 
 
-
 if __name__ == '__main__':
-
 
     tk_root = Tk()
     tk_root.title('セパレータ変換')
