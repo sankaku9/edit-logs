@@ -150,7 +150,7 @@ def change_sep():
     try:
         # ワークディレクトリ移動
         chdir(com_elb.delQuoteStartEnd(work_dir_entry.get()))
-    except Exception as e:
+    except:
         print(format_exc())
         messagebox.showerror("エラー終了", "パス > ワークディレクトリ[WORK_DIR] " + com_elb.delQuoteStartEnd(work_dir_entry.get()) + "への移動に失敗しました。")
         return
@@ -161,11 +161,11 @@ def change_sep():
     try:
         # ファイル出力設定
         log_fh = FileHandler(log_path_entry.get(), encoding=log_enc_entry.get())
-    except LookupError as e:
+    except LookupError:
         print(format_exc())
         messagebox.showerror("エラー終了", "ログ > ログ文字コード[ENCODING] " + log_enc_entry.get() + "は不正です。")
         return
-    except Exception as e:
+    except:
         print(format_exc())
         messagebox.showerror("エラー終了", "ログ > ログ出力パス[PATH] " + log_path_entry.get() + "には出力できません。")
         return
@@ -194,8 +194,8 @@ def change_sep():
         copytree(com_elb.delQuoteStartEnd(source_dir_entry.get()).replace(path.sep, '/'),
                   path.join(com_elb.delQuoteStartEnd(write_dir_entry.get()),
                                sub('[:*\?"<>\|]', '', com_elb.delQuoteStartEnd(source_dir_entry.get()).strip('./\\'))).replace(path.sep, '/'))
-    except Exception as e:
-        logger.exception(format_exc(e))
+    except:
+        logger.exception(format_exc())
         com_elb.end_gui_func(logger, logger_nl)
         messagebox.showerror("エラー終了", "[WRITE_DIR] " + com_elb.delQuoteStartEnd(write_dir_entry.get()) + "の作成に失敗しました。")
         return
@@ -219,8 +219,8 @@ def change_sep():
                                com_elb.delQuoteStartEnd(input_date_format_entry.get()),
                                com_elb.delQuoteStartEnd(output_date_format_entry.get()),
                                com_elb.delQuoteStartEnd(extract_entry.get()))
-    except Exception as e:
-        logger.exception(format_exc(e))
+    except:
+        logger.exception(format_exc())
         com_elb.end_gui_func(logger, logger_nl)
         messagebox.showerror("エラー終了", "変換中にエラーが発生しました。")
         return
