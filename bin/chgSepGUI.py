@@ -126,7 +126,7 @@ def save_file():
     cfg_parser_write.set("logging", "FORMAT_CONSOLE", log_fmtconsole_entry.get())
     cfg_parser_write.set("logging", "FORMAT_FILE", log_fmtfile_entry.get())
 
-    save_cfg_file = filedialog.asksaveasfilename(title="設定をファイルに保存", filetypes=[("設定ファイル", "*.conf"), ("全てのファイル", "*.*")], defaultextension=".conf", initialfile=load_cfg_file)
+    save_cfg_file = filedialog.asksaveasfilename(title="設定をファイルに保存", filetypes=[("設定ファイル", "*.conf"), ("全てのファイル", "*.*")], defaultextension=".conf", initialfile=path.basename(load_cfg_file))
 
     if len(save_cfg_file) != 0:
         with open(save_cfg_file, "w", encoding=EditLogConstant.CONF_ENC, newline=linesep) as f:
