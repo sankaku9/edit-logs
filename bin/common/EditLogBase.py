@@ -5,7 +5,7 @@ from csv import reader
 from shutil import copy, move
 from re import sub, match, search
 from collections import OrderedDict
-from distutils.dir_util import copy_tree, remove_tree
+from distutils.dir_util import copy_tree
 from datetime import datetime
 
 class EditLogBase:

@@ -285,7 +285,7 @@ if __name__ == '__main__':
     output_encode_entry.place(x=230, y=55)
     encode_label_dtl = ttk.Label(tab_change, text="エンコードはpythonのcodecsに準拠します。<https://docs.python.jp/3/library/codecs.html>\n\n\
 ※日本語文字コード以外は動作確認していません。\n\
-※変換不可能な文字が含まれている場合はエラーとなります。\n\
+※変換不可能な文字が含まれている場合は「●」に置き換えます。\n\
 ※出力ファイルの文字コードをcp932にした場合、「IBM拡張文字」は「NEC選定IBM拡張文字」となります。\n\
 　入力ファイルの文字コードがcp932で「IBM選定IBM拡張文字」が含まれている場合は\n\
 　「NEC選定IBM拡張文字」に変換されます（Pythonの仕様）。")
@@ -357,7 +357,8 @@ FALSEの場合は元ファイルの改行コードに従う。")
     input_sep_limit_entry.place(x=10, y=30)
     input_sep_limit_entry.insert(0, "FALSE")
     input_sep_limit_label_dtl = ttk.Label(tab_tgtlimit, text="INPUT_SEPにSPACEを選択した場合の変換対象のカラム数を数値で指定（左から数える）。\n\
-全カラムを変換対象とする場合及び、INPUT_SEPにSPACEを選択しない場合はFALSEとする。\n\n\
+全カラムを変換対象とする場合及び、INPUT_SEPにSPACEを選択しない場合は\n\
+「FALSE」を入力しておく。\n\n\
 <例:6カラムのデータを3カラム分だけ変換する。（スペース区切りをカンマ区切りに変換）>\n\
 （設定値）INPUT_SEP_SPACE_COL_CHG_LIMIT = 3\n\
 （変換前）行：　foo var hoge foo1 var1 hoge1\n\
