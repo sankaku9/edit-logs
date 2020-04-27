@@ -5,8 +5,8 @@ from csv import reader
 from shutil import copy, move
 from re import sub, match, search
 from collections import OrderedDict
-from distutils.dir_util import copy_tree
 from datetime import datetime
+import distutils.dir_util
 
 class EditLogBase:
 
@@ -78,7 +78,10 @@ class EditLogBase:
 
     # 特定ディレクトリ配下のファイル/ディレクトリをまとめて全てコピーする。
     def copyTreeAll(self, root, writeDir):
-        copy_tree(root.replace(os.path.sep, '/'),
+        # キャッシュクリア
+        distutils.dir_util._path_created = {}
+
+        distutils.dir_util.copy_tree(root.replace(os.path.sep, '/'),
                   os.path.join(writeDir,
                                sub('[:*\?"<>\|]', '', root.strip('./\\'))).replace(os.path.sep, '/'))
 

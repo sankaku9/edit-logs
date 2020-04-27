@@ -56,28 +56,27 @@ if __name__ == '__main__':
     try:
         # 出力先ディレクトリ作成
         comE.makeDir(comE.delQuoteStartEnd(confParser.get('baseset', 'WRITE_DIR')))
-    except Exception as e:
-        logger.exception(e)
+    except:
+        logger.exception()
         comE.end(logger)
 
     # 置換文字列リストファイルをOrderedDictに格納
     # 文字コードは固定
     try:
         replaceListDict = comE.updateDictFromTsv(comE.delQuoteStartEnd(confParser.get('baseset', 'REPLACE_LIST_FILE')), common.EditLogConstant.CONF_ENC)
-    except Exception as e:
+    except:
         # 置換リストファイル読み込み処理で何かしらエラーが発生した際はログ出力して終了。主に文字コード周りでのエラーを想定。
         # inputファイルの構成が保障されないので、あらゆるエラーを捕まえてログ出力してから終了させる。
-        logger.exception(e)
+        logger.exception()
         comE.end(logger)
 
-    # 出力先ディレクトリに指定ディレクトリからのディレクトリ構成を再現する
-    # 検索ディレクトリのファイルを出力ディレクトリにコピー
-    comE.copyTreeAll(comE.delQuoteStartEnd(confParser.get('baseset', 'SEARCH_DIR')), comE.delQuoteStartEnd(confParser.get('baseset', 'WRITE_DIR')))
-
-    # CSV変換向けパラメータデフォルト値
-    tmp_input_encode = comE.delQuoteStartEnd(confParser.get('formatparams', 'INPUT_ENCODE'))
-    tmp_output_encode = comE.delQuoteStartEnd(confParser.get('formatparams', 'OUTPUT_ENCODE'))
-    tmp_new_line = comE.delQuoteStartEnd(confParser.get('formatparams', 'NEW_LINE'))
+    try:
+        # 出力先ディレクトリに指定ディレクトリからのディレクトリ構成を再現する
+        # 検索ディレクトリのファイルを出力ディレクトリにコピー
+        comE.copyTreeAll(comE.delQuoteStartEnd(confParser.get('baseset', 'SEARCH_DIR')), comE.delQuoteStartEnd(confParser.get('baseset', 'WRITE_DIR')))
+    except:
+        logger.exception()
+        comE.end(logger)
 
     for root, dirs, files in os.walk(comE.delQuoteStartEnd(confParser.get('baseset', 'WRITE_DIR'))):
         logger.log(20, '処理中ディレクトリ: ')
@@ -88,12 +87,12 @@ if __name__ == '__main__':
                 comRORD.replaceOnRegexDict(LOGGER_NAME,
                                    os.path.join(root, file).replace(os.path.sep, '/'),
                                    replaceListDict,
-                                   tmp_input_encode,
-                                   tmp_output_encode,
-                                   tmp_new_line)
-            except Exception as e:
+                                   comE.delQuoteStartEnd(confParser.get('formatparams', 'INPUT_ENCODE')),
+                                   comE.delQuoteStartEnd(confParser.get('formatparams', 'OUTPUT_ENCODE')),
+                                   comE.delQuoteStartEnd(confParser.get('formatparams', 'NEW_LINE')))
+            except:
                 # 何かしらエラーが発生した際はログ出力して終了
-                logger.exception(e)
+                logger.exception()
                 comE.end(logger)
 
 

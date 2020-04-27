@@ -56,26 +56,17 @@ if __name__ == '__main__':
     try:
         # 出力先ディレクトリ作成
         comE.makeDir(comE.delQuoteStartEnd(confParser.get('baseset', 'WRITE_DIR')))
-    except Exception as e:
-        logger.exception(e)
+    except:
+        logger.exception()
         comE.end(logger)
 
-    # ソースディレクトリのファイルを出力ディレクトリにコピー
-    # 出力先ディレクトリに指定ディレクトリからのディレクトリ構成を再現する
-    comE.copyTreeAll(comE.delQuoteStartEnd(confParser.get('baseset', 'SOURCE_DIR')), comE.delQuoteStartEnd(confParser.get('baseset', 'WRITE_DIR')))
-
-    # CSV変換向けパラメータ設定
-    tmp_input_encode = comE.delQuoteStartEnd(confParser.get('formatparams', 'INPUT_ENCODE'))
-    tmp_output_encode = comE.delQuoteStartEnd(confParser.get('formatparams', 'OUTPUT_ENCODE'))
-    tmp_input_sep = comE.delQuoteStartEnd(confParser.get('formatparams', 'INPUT_SEP'))
-    tmp_output_sep = comE.delQuoteStartEnd(confParser.get('formatparams', 'OUTPUT_SEP'))
-    tmp_new_line = comE.delQuoteStartEnd(confParser.get('formatparams', 'NEW_LINE'))
-    tmp_quote = comE.delQuoteStartEnd(confParser.get('formatparams', 'QUOTE'))
-    tmp_input_sep_space_col_chg_limit = comE.delQuoteStartEnd(confParser.get('formatparams', 'INPUT_SEP_SPACE_COL_CHG_LIMIT'))
-    tmp_date_line_regex = comE.delQuoteStartEnd(confParser.get('formatparams', 'DATE_LINE_REGEX'))
-    tmp_input_date_format = comE.delQuoteStartEnd(confParser.get('formatparams', 'INPUT_DATE_FORMAT'))
-    tmp_output_date_format = comE.delQuoteStartEnd(confParser.get('formatparams', 'OUTPUT_DATE_FORMAT'))
-    tmp_extract_on_regex = comE.delQuoteStartEnd(confParser.get('formatparams', 'EXTRACT_ON_REGEX'))
+    try:
+        # ソースディレクトリのファイルを出力ディレクトリにコピー
+        # 出力先ディレクトリに指定ディレクトリからのディレクトリ構成を再現する
+        comE.copyTreeAll(comE.delQuoteStartEnd(confParser.get('baseset', 'SOURCE_DIR')), comE.delQuoteStartEnd(confParser.get('baseset', 'WRITE_DIR')))
+    except:
+        logger.exception()
+        comE.end(logger)
 
     for root, dirs, files in os.walk(comE.delQuoteStartEnd(confParser.get('baseset', 'WRITE_DIR'))):
         logger.log(20, '処理中ディレクトリ: ')
@@ -85,21 +76,21 @@ if __name__ == '__main__':
                 # 区切り文字変更
                 comCS.chg_sep(LOGGER_NAME,
                            os.path.join(root, file).replace(os.path.sep, '/'),
-                           tmp_input_encode,
-                           tmp_output_encode,
-                           tmp_input_sep,
-                           tmp_output_sep,
-                           tmp_new_line,
-                           tmp_quote,
-                           tmp_input_sep_space_col_chg_limit,
-                           tmp_date_line_regex,
-                           tmp_input_date_format,
-                           tmp_output_date_format,
-                           tmp_extract_on_regex)
+                           comE.delQuoteStartEnd(confParser.get('formatparams', 'INPUT_ENCODE')),
+                           comE.delQuoteStartEnd(confParser.get('formatparams', 'OUTPUT_ENCODE')),
+                           comE.delQuoteStartEnd(confParser.get('formatparams', 'INPUT_SEP')),
+                           comE.delQuoteStartEnd(confParser.get('formatparams', 'OUTPUT_SEP')),
+                           comE.delQuoteStartEnd(confParser.get('formatparams', 'NEW_LINE')),
+                           comE.delQuoteStartEnd(confParser.get('formatparams', 'QUOTE')),
+                           comE.delQuoteStartEnd(confParser.get('formatparams', 'INPUT_SEP_SPACE_COL_CHG_LIMIT')),
+                           comE.delQuoteStartEnd(confParser.get('formatparams', 'DATE_LINE_REGEX')),
+                           comE.delQuoteStartEnd(confParser.get('formatparams', 'INPUT_DATE_FORMAT')),
+                           comE.delQuoteStartEnd(confParser.get('formatparams', 'OUTPUT_DATE_FORMAT')),
+                           comE.delQuoteStartEnd(confParser.get('formatparams', 'EXTRACT_ON_REGEX')))
 
-            except Exception as e:
+            except:
                 # 何かしらエラーが発生した際はログ出力して終了
-                logger.exception(e)
+                logger.exception()
                 comE.end(logger)
 
     # 終了共通
