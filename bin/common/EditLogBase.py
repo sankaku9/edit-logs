@@ -182,7 +182,6 @@ class EditLogBase:
         return targetStr
 
     # 文字列両端クォート除去
-    # stripを使用すべきかreで行くか悩み中
     def delQuoteStartEnd(self, targetStr):
         targetStr = sub('(^["\']|["\']$)', '', targetStr)
         return targetStr
