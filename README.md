@@ -2,7 +2,7 @@
 
 ### 動作確認環境
 
-Windows 10
+Windows 10 （日本語環境）
 
 ### 【GUI】chgSepGUI.exeと【CLI】chgSep.exe について。
 

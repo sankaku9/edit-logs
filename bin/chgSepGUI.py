@@ -476,7 +476,7 @@ DATE_FORMATの形式はpythonのdatetimeに準拠\n\
 
     memo_label = ttk.Label(bottom_frame, text='メモ')
     memo_label.place(x=5, y=0)
-    memo_text = Text(bottom_frame, width=75, height=5)
+    memo_text = Text(bottom_frame, width=65, height=5)
     memo_text.place(x=5, y=18)
 
     exe_change_btn = ttk.Button(bottom_frame, text='変換実行', command=change_sep)
