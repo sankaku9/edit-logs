@@ -254,80 +254,86 @@ if __name__ == '__main__':
     center_frame.grid(row=1, column=0)
 
     main_nb = ttk.Notebook(center_frame, width=535, height=562)
-    tab_change = ttk.Frame(main_nb)
+    tab_base = ttk.Frame(main_nb)
     tab_quote = ttk.Frame(main_nb)
     tab_tgtlimit = ttk.Frame(main_nb)
     tab_date = ttk.Frame(main_nb)
     tab_extract = ttk.Frame(main_nb)
-    tab_path = ttk.Frame(main_nb)
     tab_log = ttk.Frame(main_nb)
-    main_nb.add(tab_change, text='変換', padding=3)
-    main_nb.add(tab_quote, text='囲み文字', padding=3)
-    main_nb.add(tab_tgtlimit, text='変換制限', padding=3)
-    main_nb.add(tab_date, text='日時抽出付与', padding=3)
-    main_nb.add(tab_extract, text='行抽出', padding=3)
-    main_nb.add(tab_path, text='パス', padding=3)
-    main_nb.add(tab_log, text='ログ', padding=3)
+    main_nb.add(tab_base, text='基本設定', padding=3)
+    main_nb.add(tab_quote, text='変換設定', padding=3)
+    main_nb.add(tab_tgtlimit, text='変換制限機能', padding=3)
+    main_nb.add(tab_date, text='日時抽出付与機能', padding=3)
+    main_nb.add(tab_extract, text='行抽出機能', padding=3)
+    main_nb.add(tab_log, text='ログ設定', padding=3)
     main_nb.pack(expand=1, fill='both')
 
     # ==========
-    # tab_change
+    # tab_base
     # ==========
-    sep_label = ttk.Label(tab_change, text='## 区切り文字指定')
-    sep_label.place(x=10, y=10)
-    input_sep_label = ttk.Label(tab_change, text='入力ファイル区切り文字[INPUT_SEP]')
-    input_sep_label.place(x=10, y=30)
-    input_sep_combo = ttk.Combobox(tab_change, state='readonly', width=8)
+    path_label = ttk.Label(tab_base, text='## 入出力パス設定\n\n')
+    path_label.place(x=10, y=10)
+    work_dir_label = ttk.Label(tab_base, text='ワークディレクトリ[WORK_DIR]: \n※絶対パス指定')
+    work_dir_label.place(x=10, y=30)
+    work_dir_entry = ttk.Entry(tab_base, width=45)
+    work_dir_entry.place(x=220, y=30)
+
+    source_dir_label = ttk.Label(tab_base, text='変換前ファイルディレクトリ[SOURCE_DIR]: \n※WORK_DIRからの相対パス指定')
+    source_dir_label.place(x=10, y=65)
+    source_dir_entry = ttk.Entry(tab_base, width=45)
+    source_dir_entry.place(x=220, y=65)
+
+    write_dir_label = ttk.Label(tab_base, text='変換後ファイルディレクトリ[WRITE_DIR]: \n※WORK_DIRからの相対パス指定')
+    write_dir_label.place(x=10, y=100)
+    write_dir_entry = ttk.Entry(tab_base, width=45)
+    write_dir_entry.place(x=220, y=100)
+
+    sep_label = ttk.Label(tab_base, text='## 区切り文字指定')
+    sep_label.place(x=10, y=150)
+    input_sep_label = ttk.Label(tab_base, text='入力ファイル区切り文字[INPUT_SEP]')
+    input_sep_label.place(x=10, y=170)
+    input_sep_combo = ttk.Combobox(tab_base, state='readonly', width=8)
     input_sep_combo['values'] = ('COMMA', 'TAB', 'SPACE')
     input_sep_combo.current(0)
-    input_sep_combo.place(x=230, y=30)
-    output_sep_label = ttk.Label(tab_change, text='出力ファイル区切り文字[OUTPUT_SEP]')
-    output_sep_label.place(x=10, y=55)
-    output_sep_combo = ttk.Combobox(tab_change, state='readonly', width=8)
+    input_sep_combo.place(x=230, y=170)
+    output_sep_label = ttk.Label(tab_base, text='出力ファイル区切り文字[OUTPUT_SEP]')
+    output_sep_label.place(x=10, y=195)
+    output_sep_combo = ttk.Combobox(tab_base, state='readonly', width=8)
     output_sep_combo['values'] = ('COMMA', 'TAB', 'SPACE')
     output_sep_combo.current(0)
-    output_sep_combo.place(x=230, y=55)
-    sep_label_dtl = ttk.Label(tab_change, text='COMMA, TAB, SPACE のどれかを選択。\n\
+    output_sep_combo.place(x=230, y=195)
+    sep_label_dtl = ttk.Label(tab_base, text='COMMA, TAB, SPACE のどれかを選択。\n\
 INPUT_SEPにSPACEを選択した場合のみ、連続するセパレータは1つと解釈されます。\n\n\
 <例>\n\
 （変換前）行：　"foo"␣␣␣"var"␣␣␣␣␣"hoge"　（<--半角スペースを␣で表示）\n\
 （変換後）行：　"foo" ,"var","hoge"\n\
 ※連続するスペースは一つのスペースセパレータと解釈されます。\n\
 　【行：　"foo",,,"var",,,,,"hoge"】とはなりません。')
-    sep_label_dtl.place(x=10, y=85)
+    sep_label_dtl.place(x=10, y=225)
 
-    encode_label = ttk.Label(tab_change, text='## エンコード指定\n\n')
-    encode_label.place(x=10, y=220)
-    input_encode_label = ttk.Label(tab_change, text='入力ファイル文字コード[INPUT_ENCODE]')
-    input_encode_label.place(x=10, y=240)
-    input_encode_entry = ttk.Entry(tab_change, width=15)
-    input_encode_entry.place(x=230, y=240)
-    output_encode_label = ttk.Label(tab_change, text='出力ファイル文字コード[OUTPUT_ENCODE]')
-    output_encode_label.place(x=10, y=265)
-    output_encode_entry = ttk.Entry(tab_change, width=15)
-    output_encode_entry.place(x=230, y=265)
-    encode_label_dtl = ttk.Label(tab_change, text='エンコードはpythonのcodecsに準拠します。<https://docs.python.jp/3/library/codecs.html>\n\n\
+    encode_label = ttk.Label(tab_base, text='## エンコード指定\n\n')
+    encode_label.place(x=10, y=360)
+    input_encode_label = ttk.Label(tab_base, text='入力ファイル文字コード[INPUT_ENCODE]')
+    input_encode_label.place(x=10, y=380)
+    input_encode_entry = ttk.Entry(tab_base, width=15)
+    input_encode_entry.place(x=230, y=380)
+    output_encode_label = ttk.Label(tab_base, text='出力ファイル文字コード[OUTPUT_ENCODE]')
+    output_encode_label.place(x=10, y=405)
+    output_encode_entry = ttk.Entry(tab_base, width=15)
+    output_encode_entry.place(x=230, y=405)
+    encode_label_dtl = ttk.Label(tab_base, text='エンコードはpythonのcodecsに準拠します。<https://docs.python.jp/3/library/codecs.html>\n\n\
 ※日本語文字コード以外は動作確認していません。\n\
 ※変換不可能な文字が含まれている場合は「●」に置き換えます。\n\
 ※出力ファイルの文字コードをcp932にした場合、「IBM拡張文字」は「NEC選定IBM拡張文字」となります。\n\
 　入力ファイルの文字コードがcp932で「IBM選定IBM拡張文字」が含まれている場合は\n\
 　「NEC選定IBM拡張文字」に変換されます（Pythonの仕様）。')
-    encode_label_dtl.place(x=10, y=295)
+    encode_label_dtl.place(x=10, y=435)
 
-    new_line_label = ttk.Label(tab_change, text='## 出力改行コード[NEW_LINE]')
-    new_line_label.place(x=10, y=410)
-    new_line_combo = ttk.Combobox(tab_change, state='readonly', width=6)
-    new_line_combo['values'] = ('CRLF', 'LF', 'CR', 'FALSE')
-    new_line_combo.current(0)
-    new_line_combo.place(x=10, y=435)
-    new_line_label_dtl = ttk.Label(tab_change, text='CRLF, LF, CR, FALSE のどれかを選択。\n\
-FALSEの場合は元ファイルの改行コードに従う。')
-    new_line_label_dtl.place(x=10, y=460)
 
     # ==========
     # tab_quote
     # ==========
-    quote_label = ttk.Label(tab_quote, text='1カラムであることを示す囲み文字[QUOTE]')
+    quote_label = ttk.Label(tab_quote, text='## 1カラムであることを示す囲み文字[QUOTE]')
     quote_label.place(x=10, y=10)
     quote_combo = ttk.Combobox(tab_quote, state='readonly')
     quote_combo['values'] = ('FALSE', 'SINGLE', 'DOUBLE', 'QUOTES', 'SQUARE_BRACKETS', 'ALL')
@@ -348,6 +354,16 @@ FALSEの場合は元ファイルの改行コードに従う。')
 ２．囲み文字内に区切り文字が無い場合は囲み文字の不整合はエラーにならず、そのまま出力します。\n\
     （例）\'foo" "var\' [hoge"')
     quote_combo_label_dtl.place(x=10, y=60)
+
+    new_line_label = ttk.Label(tab_quote, text='## 出力改行コード[NEW_LINE]')
+    new_line_label.place(x=10, y=350)
+    new_line_combo = ttk.Combobox(tab_quote, state='readonly', width=6)
+    new_line_combo['values'] = ('CRLF', 'LF', 'CR', 'FALSE')
+    new_line_combo.current(0)
+    new_line_combo.place(x=10, y=375)
+    new_line_label_dtl = ttk.Label(tab_quote, text='CRLF, LF, CR, FALSE のどれかを選択。\n\
+FALSEの場合は元ファイルの改行コードに従う。')
+    new_line_label_dtl.place(x=10, y=400)
 
     # ==========
     # tab_tgtlimit
@@ -415,24 +431,6 @@ DATE_FORMATの形式はpythonのdatetimeに準拠\n\
     extract_entry.place(x=10, y=30)
     extract_label_dtl = ttk.Label(tab_extract, text='正規表現に一致する文字列を含む行のみ出力する。\n使用しない場合は空白とする。')
     extract_label_dtl.place(x=10, y=60)
-
-    # ==========
-    # tab_path
-    # ==========
-    work_dir_label = ttk.Label(tab_path, text='ワークディレクトリ[WORK_DIR]\n※絶対パス指定')
-    work_dir_label.place(x=10, y=10)
-    work_dir_entry = ttk.Entry(tab_path, width=80)
-    work_dir_entry.place(x=10, y=45)
-
-    source_dir_label = ttk.Label(tab_path, text='変換前ファイルディレクトリ[SOURCE_DIR]\n※WORK_DIRからの相対パス指定')
-    source_dir_label.place(x=10, y=80)
-    source_dir_entry = ttk.Entry(tab_path, width=80)
-    source_dir_entry.place(x=10, y=115)
-
-    write_dir_label = ttk.Label(tab_path, text='変換後ファイルディレクトリ[WRITE_DIR]\n※WORK_DIRからの相対パス指定')
-    write_dir_label.place(x=10, y=150)
-    write_dir_entry = ttk.Entry(tab_path, width=80)
-    write_dir_entry.place(x=10, y=185)
 
     # ==========
     # tab_log
