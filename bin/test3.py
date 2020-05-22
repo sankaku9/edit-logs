@@ -1,5 +1,5 @@
 import wx
-
+from common import EditLogConstant, EditLogBase, ComChgSep
 
 if __name__ == '__main__':
 
@@ -61,9 +61,8 @@ if __name__ == '__main__':
     main_panel.SetSizerAndFit(main_panel_sizer)
 
 
-
     ######
-    # tab_base向け設定
+    # tab_base 向け設定
     ######
     # io_path_panel向け要素
     io_path_panel = wx.Panel(tab_base, wx.ID_ANY)
@@ -171,6 +170,200 @@ INPUT_SEPにSPACEを選択した場合のみ、連続するセパレータは1�
     tab_base_sizer.Add(sep_panel, 3, wx.EXPAND | wx.ALL, 5)
     tab_base_sizer.Add(enc_panel, 3, wx.EXPAND | wx.ALL, 5)
     tab_base.SetSizer(tab_base_sizer)
+
+    ######
+    # tab_quote 向け設定
+    ######
+    # quote_panel
+    quote_panel = wx.Panel(tab_quote, wx.ID_ANY)
+
+    # quote_panel 向け要素
+    quote_cbox = wx.ComboBox(quote_panel, wx.ID_ANY, 'FALSE', choices=('FALSE', 'SINGLE', 'DOUBLE', 'QUOTES', 'SQUARE_BRACKETS', 'ALL'), style=wx.CB_READONLY)
+    quote_stext = wx.StaticText(quote_panel, wx.ID_ANY, '囲み文字内に区切り文字が存在しても区切り文字として認識されません。\n\
+    （例）\'fo,o\' "va,r" [h,oge]\n\n\
+設定可能なパラメータは以下の通り。\n\
+    ・FALSE : 囲み文字処理無し\n\
+    ・SINGLE : <\'\'>\n\
+    ・DOUBLE : <"">\n\
+    ・QUOTES : <\'\'> + <"">\n\
+    ・SQUARE_BRACKETS : <[]>\n\
+    ・ALL : <\'\'> + <""> + <[]>\n\n\
+<QUOTES, ALLを選択した場合の注意点>\n\
+１．囲み文字内に区切り文字が含まれていて、囲み文字の始まりと終わりが異なる場合はエラーとなります。\n\
+    （例）\'fo,o" "va,r\' [h,oge" \n\n\
+２．囲み文字内に区切り文字が無い場合は囲み文字の不整合はエラーにならず、そのまま出力します。\n\
+    （例）\'foo" "var\' [hoge"')
+
+    # quote_panel 向けSizer
+    quote_panel_box = wx.StaticBox(quote_panel, wx.ID_ANY, '1カラムであることを示す囲み文字[QUOTE]')
+    quote_panel_sizer = wx.StaticBoxSizer(quote_panel_box, wx.VERTICAL)
+    quote_panel_sizer.Add(quote_cbox, 0, wx.BOTTOM, 5)
+    quote_panel_sizer.Add(quote_stext, 0, wx.BOTTOM, 5)
+    quote_panel.SetSizer(quote_panel_sizer)
+
+    # newline_panel
+    newline_panel = wx.Panel(tab_quote, wx.ID_ANY)
+
+    # newline_panel 向け要素
+    newline_cbox = wx.ComboBox(newline_panel, wx.ID_ANY, 'CRLF', choices=('CRLF', 'LF', 'CR', 'FALSE'), style=wx.CB_READONLY)
+    newline_stext = wx.StaticText(newline_panel, wx.ID_ANY, 'CRLF, LF, CR, FALSE のどれかを選択。\n\
+FALSEの場合は元ファイルの改行コードに従う。')
+
+    # newline_panel 向けSizer
+    newline_panel_box = wx.StaticBox(newline_panel, wx.ID_ANY, '出力改行コード[NEW_LINE]')
+    newline_panel_sizer = wx.StaticBoxSizer(newline_panel_box, wx.VERTICAL)
+    newline_panel_sizer.Add(newline_cbox, 0, wx.BOTTOM, 5)
+    newline_panel_sizer.Add(newline_stext, 0, wx.BOTTOM, 5)
+    newline_panel.SetSizer(newline_panel_sizer)
+
+    # tab_quote 向けSizer
+    tab_quote_sizer = wx.BoxSizer(wx.VERTICAL)
+    tab_quote_sizer.Add(quote_panel, 0, wx.EXPAND | wx.ALL, 5)
+    tab_quote_sizer.Add(newline_panel, 0, wx.EXPAND | wx.ALL, 5)
+    tab_quote.SetSizer(tab_quote_sizer)
+
+
+    ######
+    # tab_tgtlimit 向け設定
+    ######
+    # tgtlimit_panel
+    tgtlimit_panel = wx.Panel(tab_tgtlimit, wx.ID_ANY)
+
+    # tgtlimit_panel 向け要素
+    tgtlimit_textc = wx.TextCtrl(tgtlimit_panel, wx.ID_ANY, 'FALSE', size=(50,-1))
+    tgtlimit_stext = wx.StaticText(tgtlimit_panel, wx.ID_ANY, 'INPUT_SEPにSPACEを選択した場合の変換対象のカラム数を数値で指定（左から数える）。\n\
+全カラムを変換対象とする場合及び、INPUT_SEPにSPACEを選択しない場合は\n\
+「FALSE」を入力しておく。\n\n\
+<例:6カラムのデータを3カラム分だけ変換する。（スペース区切りをカンマ区切りに変換）>\n\
+（設定値）INPUT_SEP_SPACE_COL_CHG_LIMIT = 3\n\
+（変換前）行：　foo var hoge foo1 var1 hoge1\n\
+（変換後）行：　foo,var,hoge,foo1 var1 hoge1')
+
+    # tgtlimit_panel 向けSizer
+    tgtlimit_panel_box = wx.StaticBox(tgtlimit_panel, wx.ID_ANY, '変換対象カラム数制限[INPUT_SEP_SPACE_COL_CHG_LIMIT]')
+    tgtlimit_panel_sizer = wx.StaticBoxSizer(tgtlimit_panel_box, wx.VERTICAL)
+    tgtlimit_panel_sizer.Add(tgtlimit_textc, 0, wx.BOTTOM, 5)
+    tgtlimit_panel_sizer.Add(tgtlimit_stext, 0, wx.BOTTOM, 5)
+    tgtlimit_panel.SetSizer(tgtlimit_panel_sizer)
+
+    # tab_tgtlimit 向けSizer
+    tab_tgtlimit_sizer = wx.BoxSizer(wx.VERTICAL)
+    tab_tgtlimit_sizer.Add(tgtlimit_panel, 0, wx.EXPAND | wx.ALL, 5)
+    tab_tgtlimit.SetSizer(tab_tgtlimit_sizer)
+
+
+    ######
+    # tab_date 向け設定
+    ######
+    # date_panel
+    date_panel = wx.Panel(tab_date, wx.ID_ANY)
+
+    # date_panel 向け要素
+    date_line_regex_stext = wx.StaticText(date_panel, wx.ID_ANY, '日時文字列取得用正規表現[DATE_LINE_REGEX]')
+    date_line_regex_textc = wx.TextCtrl(date_panel, wx.ID_ANY, size=(560, -1))
+    input_date_format_stext = wx.StaticText(date_panel, wx.ID_ANY, '入力日時フォーマット[INPUT_DATE_FORMAT]')
+    input_date_format_textc = wx.TextCtrl(date_panel, wx.ID_ANY, size=(560, -1))
+    output_date_format_stext = wx.StaticText(date_panel, wx.ID_ANY, '出力日時フォーマット[OUTPUT_DATE_FORMAT]')
+    output_date_format_textc = wx.TextCtrl(date_panel, wx.ID_ANY, size=(560, -1))
+    date_ext_stext = wx.StaticText(date_panel, wx.ID_ANY, '正規表現DATE_LINE_REGEXに従って行内に存在する日時に関わる\n\
+文字列を取得してINPUT_DATE_FORMATで日付型に変換し、該当行及び\n\
+以降の行の行頭にOUTPUT_DATE_FORMATの形式で日時を付与する。\n\
+※行頭付与される日時は「変換制限」の制限カラム数に含まれません。\n\n\
+使用しない場合は空白とする。\n\
+DATE_FORMATの形式はpythonのdatetimeに準拠\n\
+<https://docs.python.jp/3/library/datetime.html>\n\n\
+<例:行頭に日時を付与する。（スペース区切りをカンマ区切りに変換）>\n\
+（設定値）\n\
+・DATE_LINE_REGEX = [0-9]{2,2}/[a-zA-Z]{3,3}/[0-9]{4,4}:[0-9]{2,2}:[0-9]{2,2}:[0-9]{2,2}\n\
+・INPUT_DATE_FORMAT = %d/%b/%Y:%H:%M:%S\n\
+・OUTPUT_DATE_FORMAT = %Y/%m/%d %H:%M:%S\n\
+（変換前）\n\
+1行目：　foo var 21/Aug/2017:10:10:10 hoge\n\
+2行目：　foo1 var1 hoge1 hoge11\n\
+3行目：　foo2 var2 hoge2 hoge22\n\
+（変換後）\n\
+1行目：　2017/08/21 10:10:10,foo,var,21/Aug/2017:10:10:10,hoge\n\
+2行目：　2017/08/21 10:10:10,foo1,var1,hoge1,hoge11\n\
+3行目：　2017/08/21 10:10:10,foo2,var2,hoge2,hoge22')
+
+    # date_panel 向けSizer
+    date_panel_box = wx.StaticBox(date_panel, wx.ID_ANY, '日時文字列取得用パラメータ')
+    date_panel_sizer = wx.StaticBoxSizer(date_panel_box, wx.VERTICAL)
+    date_panel_sizer.Add(date_line_regex_stext, 0, wx.BOTTOM, 5)
+    date_panel_sizer.Add(date_line_regex_textc, 0, wx.BOTTOM, 5)
+    date_panel_sizer.Add(input_date_format_stext, 0, wx.BOTTOM, 5)
+    date_panel_sizer.Add(input_date_format_textc, 0, wx.BOTTOM, 5)
+    date_panel_sizer.Add(output_date_format_stext, 0, wx.BOTTOM, 5)
+    date_panel_sizer.Add(output_date_format_textc, 0, wx.BOTTOM, 5)
+    date_panel_sizer.Add(date_ext_stext, 0, wx.BOTTOM, 5)
+    date_panel.SetSizer(date_panel_sizer)
+
+    # tab_date 向けSizer
+    tab_date_sizer = wx.BoxSizer(wx.VERTICAL)
+    tab_date_sizer.Add(date_panel, 0, wx.EXPAND | wx.ALL, 5)
+    tab_date.SetSizer(tab_date_sizer)
+
+
+    ######
+    # tab_extract 向け設定
+    ######
+    # extract_panel
+    extract_panel = wx.Panel(tab_extract, wx.ID_ANY)
+
+    # extract_panel 向け要素
+    extract_textc = wx.TextCtrl(extract_panel, wx.ID_ANY, size=(560, -1))
+    extract_stext = wx.StaticText(extract_panel, wx.ID_ANY, '正規表現に一致する文字列を含む行のみ出力する。\n使用しない場合は空白とする。')
+
+    # extract_panel 向けSizer
+    extract_panel_box = wx.StaticBox(extract_panel, wx.ID_ANY, '抽出用正規表現[EXTRACT_ON_REGEX]')
+    extract_panel_sizer = wx.StaticBoxSizer(extract_panel_box, wx.VERTICAL)
+    extract_panel_sizer.Add(extract_textc, 0, wx.BOTTOM, 5)
+    extract_panel_sizer.Add(extract_stext, 0, wx.BOTTOM, 5)
+    extract_panel.SetSizer(extract_panel_sizer)
+
+    # tab_extract
+    tab_extract_sizer = wx.BoxSizer(wx.VERTICAL)
+    tab_extract_sizer.Add(extract_panel, 0, wx.EXPAND | wx.ALL, 5)
+    tab_extract.SetSizer(tab_extract_sizer)
+
+
+    ######
+    # tab_log 向け設定
+    ######
+    # log_panel
+    log_panel = wx.Panel(tab_log, wx.ID_ANY)
+
+    # log_panel 向け要素
+    log_path_stext = wx.StaticText(log_panel, wx.ID_ANY, 'ログ出力パス[PATH]')
+    log_path_textc = wx.TextCtrl(log_panel, wx.ID_ANY, './editLogs.log', size=(560, -1))
+    log_enc_stext = wx.StaticText(log_panel, wx.ID_ANY, 'ログ文字コード[ENCODING]')
+    log_enc_textc = wx.TextCtrl(log_panel, wx.ID_ANY, EditLogConstant.CONF_ENC, size=(560, -1))
+    log_date_stext = wx.StaticText(log_panel, wx.ID_ANY, 'ログ日時フォーマット[DATE_FMT]')
+    log_date_textc = wx.TextCtrl(log_panel, wx.ID_ANY, '%Y/%m/%d %H:%M:%S', size=(560, -1))
+    log_fmtconsole_stext = wx.StaticText(log_panel, wx.ID_ANY, 'コンソール向けログフォーマット[FORMAT_CONSOLE]')
+    log_fmtconsole_textc = wx.TextCtrl(log_panel, wx.ID_ANY, '%(asctime)s.%(msecs)d : %(name)s : %(levelname)s : %(lineno)d : "%(message)s"', size=(560, -1))
+    log_fmtfile_stext = wx.StaticText(log_panel, wx.ID_ANY, 'ファイル向けログフォーマット[FORMAT_FILE]')
+    log_fmtfile_textc = wx.TextCtrl(log_panel, wx.ID_ANY, '"%(asctime)s"	"%(msecs)d"	"%(name)s"	"%(levelname)s"	"%(lineno)d"	"%(message)s"', size=(560, -1))
+
+    # log_panel 向けSizer
+    log_panel_box = wx.StaticBox(log_panel, wx.ID_ANY, 'ログ設定')
+    log_panel_sizer = wx.StaticBoxSizer(log_panel_box, wx.VERTICAL)
+    log_panel_sizer.Add(log_path_stext, 0, wx.BOTTOM, 5)
+    log_panel_sizer.Add(log_path_textc, 0, wx.BOTTOM, 5)
+    log_panel_sizer.Add(log_enc_stext, 0, wx.BOTTOM, 5)
+    log_panel_sizer.Add(log_enc_textc, 0, wx.BOTTOM, 5)
+    log_panel_sizer.Add(log_date_stext, 0, wx.BOTTOM, 5)
+    log_panel_sizer.Add(log_date_textc, 0, wx.BOTTOM, 5)
+    log_panel_sizer.Add(log_fmtconsole_stext, 0, wx.BOTTOM, 5)
+    log_panel_sizer.Add(log_fmtconsole_textc, 0, wx.BOTTOM, 5)
+    log_panel_sizer.Add(log_fmtfile_stext, 0, wx.BOTTOM, 5)
+    log_panel_sizer.Add(log_fmtfile_textc, 0, wx.BOTTOM, 5)
+    log_panel.SetSizer(log_panel_sizer)
+
+    # tab_log
+    tab_log_sizer = wx.BoxSizer(wx.VERTICAL)
+    tab_log_sizer.Add(log_panel, 0, wx.EXPAND | wx.ALL, 5)
+    tab_log.SetSizer(tab_log_sizer)
 
 
 
