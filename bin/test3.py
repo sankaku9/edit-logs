@@ -1,7 +1,100 @@
 import wx
+from configparser import RawConfigParser
 from common import EditLogConstant, EditLogBase, ComChgSep
 
+load_cfg_file = ''
+
+
+'''
+def select_submenu(event):
+    event_id = event.GetId()
+    if event_id == 1:
+        open_file
+    elif event_id == 2:
+        pass
+'''
+
+
+def open_file(self):
+    global load_cfg_file
+    dialog = wx.FileDialog(None, '設定ファイル読込', '', '', '設定ファイル(*.conf)|*.conf|全てのファイル(*.*)|*.*', style=wx.FD_OPEN)
+#    load_cfg_file = filedialog.askopenfilename(title='設定ファイル読込', filetypes=[('設定ファイル', '*.conf'), ('全てのファイル', '*.*')])
+    if dialog.ShowModal() == wx.ID_CANCEL:
+        return
+
+    load_cfg_file = dialog.GetPath()
+
+    if len(load_cfg_file) != 0 :
+        cfg_parser_read = RawConfigParser()
+        cfg_parser_read.read(load_cfg_file , encoding=EditLogConstant.CONF_ENC)
+
+        # ==========
+        # baseset
+        # ==========
+        workdir_textc.SetValue(cfg_parser_read.get('baseset', 'WORK_DIR'))
+
+        sourcedir_textc.SetValue(cfg_parser_read.get('baseset', 'SOURCE_DIR'))
+
+        writedir_textc.SetValue(cfg_parser_read.get('baseset', 'WRITE_DIR'))
+
+        if len(cfg_parser_read.get('baseset', 'MEMO')) != 0 :
+            memo_textc.SetValue(cfg_parser_read.get('baseset', 'MEMO'))
+
+        # ==========
+        # formatparams
+        # ==========
+        inputenc_textc.SetValue(cfg_parser_read.get('formatparams', 'INPUT_ENCODE'))
+
+        outputenc_textc.SetValue(cfg_parser_read.get('formatparams', 'OUTPUT_ENCODE'))
+
+        try:
+            inputsep_cbox.SetStringSelection(cfg_parser_read.get('formatparams', 'INPUT_SEP'))
+        except:
+            wx.MessageBox('パラメータエラー', 'INPUT_SEPの値が不正です。', wx.ICON_ERROR)
+
+        try:
+            outputsep_cbox.SetStringSelection(cfg_parser_read.get('formatparams', 'OUTPUT_SEP'))
+        except:
+            wx.MessageBox('パラメータエラー', 'OUTPUT_SEPの値が不正です。', wx.ICON_ERROR)
+
+        try:
+            newline_cbox.SetStringSelection(cfg_parser_read.get('formatparams', 'NEW_LINE'))
+        except:
+            wx.MessageBox('パラメータエラー', 'NEW_LINEの値が不正です。', wx.ICON_ERROR)
+
+        try:
+            quote_cbox.SetStringSelection(cfg_parser_read.get('formatparams', 'QUOTE'))
+        except:
+            wx.MessageBox('パラメータエラー', 'QUOTEの値が不正です。', wx.ICON_ERROR)
+
+        tgtlimit_textc.SetValue(cfg_parser_read.get('formatparams', 'INPUT_SEP_SPACE_COL_CHG_LIMIT'))
+
+        date_line_regex_textc.SetValue(cfg_parser_read.get('formatparams', 'DATE_LINE_REGEX'))
+
+        input_date_format_textc.SetValue(cfg_parser_read.get('formatparams', 'INPUT_DATE_FORMAT'))
+
+        output_date_format_textc.SetValue(cfg_parser_read.get('formatparams', 'OUTPUT_DATE_FORMAT'))
+
+        extract_textc.SetValue(cfg_parser_read.get('formatparams', 'EXTRACT_ON_REGEX'))
+
+        # ==========
+        # logging
+        # ==========
+        log_path_textc.SetValue(cfg_parser_read.get('logging', 'PATH'))
+
+        log_enc_textc.SetValue(cfg_parser_read.get('logging', 'ENCODING'))
+
+        log_date_textc.SetValue(cfg_parser_read.get('logging', 'DATE_FMT'))
+
+        log_fmtconsole_textc.SetValue(cfg_parser_read.get('logging', 'FORMAT_CONSOLE'))
+
+        log_fmtfile_textc.SetValue(cfg_parser_read.get('logging', 'FORMAT_FILE'))
+
+
 if __name__ == '__main__':
+
+    ID_FILE_OPEN = wx.NewIdRef(count=1)
+    ID_FILE_SAVE = wx.NewIdRef(count=1)
 
     # Window設定
     application = wx.App()
@@ -11,11 +104,14 @@ if __name__ == '__main__':
 
     # メニュー
     menu_conf = wx.Menu()
-    menu_conf.Append(1, '開く')
-    menu_conf.Append(2, '保存')
+    menu_conf.Append(ID_FILE_OPEN, '開く')
+    menu_conf.Append(ID_FILE_SAVE, '保存')
 
     menu_bar = wx.MenuBar()
     menu_bar.Append(menu_conf, '設定ファイル')
+
+    #frame.bind(wx.EVT_MENU, select_submenu)
+    frame.Bind(wx.EVT_MENU, open_file, id=ID_FILE_OPEN)
 
     frame.SetMenuBar(menu_bar)
 
@@ -373,3 +469,5 @@ DATE_FORMATの形式はpythonのdatetimeに準拠\n\
     #notebook.Refresh()
     # Window表示
     application.MainLoop()
+
+
