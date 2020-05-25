@@ -1,5 +1,6 @@
 import os
 import sys
+import wx
 from logging import getLogger
 from csv import reader
 from shutil import copy, move
@@ -24,10 +25,12 @@ class EditLogBase:
         sys.exit()
 
     # 終了処理
-    def end_gui_func(self, logger, loggerNL):
-        logger.log(20, '---end--------------------')
-        for loggerName in loggerNL:
-            logger.removeHandler(loggerName)
+    def end_gui_func(self, logger, loggerNL, application: wx):
+        if logger != '':
+            logger.log(20, '---end--------------------')
+            for loggerName in loggerNL:
+                logger.removeHandler(loggerName)
+        application.InitLocale()
 
 
     # クリーンなディレクトリ作成
