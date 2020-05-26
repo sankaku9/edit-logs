@@ -18,8 +18,7 @@ CSV形式テキストファイルのセパレータを変更して指定フォ�
 ## インストール方法
 
 「editLogs_vXX.zip」を任意の場所に解凍する。<br>
-※ここでは「C:\tmp」に解凍する前提で記載します（例：C:\tmp\editLogs）。<br>
-※サンプル設定及びデータを動かす場合は必ず「C:\tmp」に解凍してください。
+※ここでは「C:\tmp」に解凍する前提で記載します（例：C:\tmp\editLogs）。<br>※また、サンプル設定及びデータを動かす場合は必ず「C:\tmp」に解凍してください。
 
 ## 実行方法
 
@@ -31,8 +30,7 @@ CSV形式テキストファイルのセパレータを変更して指定フォ�
 
 3. 「メニューバー：設定ファイル」から、<br>設定のファイル出力「保存」と呼び出し「開く」が出来ます。
 
-※サンプル設定が C:\tmp\editLogs\conf に格納されています。そちらを使用して動作確認ができます。<br>
-※サンプル設定はCLIとGUIで共通です。
+※GUI向けのサンプル設定が C:\tmp\editLogs\conf_GUI に格納されています。そちらを使用して動作確認ができます。
 
 ### 【CLI】chgSep.exe 実行方法
 
@@ -43,7 +41,7 @@ CSV形式テキストファイルのセパレータを変更して指定フォ�
 2. 設定ファイルのパラメータ「SOURCE_DIR」に指定したフォルダに変換対象ファイルを格納する。
 
 3. コマンドプロンプトを起動して以下を実行する。<br>
-`> C:\tmp\editLogs\bin\CLI\chgSep.exe C:\tmp\editLogs\conf\chgSep\chgSep.conf`<br>
+`> C:\tmp\editLogs\bin\chgSep.exe C:\tmp\editLogs\conf\chgSep\chgSep.conf`<br>
 ※実行ファイル及び設定ファイルは相対パスで実行しても問題ありません。<br>
 ※設定ファイルを任意のパス、名前とした場合はそれを第一引数に指定してください。
 
@@ -62,7 +60,7 @@ CSV形式テキストファイルのセパレータを変更して指定フォ�
 3. 設定ファイルのパラメータ「SEARCH_DIR」に指定したフォルダに変換対象ファイルを格納する。
 
 4. コマンドプロンプトを起動して以下を実行する。<br>
-`> C:\tmp\editLogs\bin\CLI\replaceOnDict.exe C:\tmp\editLogs\conf\replaceOnDict\replaceOnDict.conf`<br>
+`> C:\tmp\editLogs\bin\replaceOnDict.exe C:\tmp\editLogs\conf\replaceOnDict\replaceOnDict.conf`<br>
 ※実行ファイル及び設定ファイルは相対パスで実行しても問題ありません。<br>
 ※設定ファイルを任意のパス、名前とした場合はそれを第一引数に指定してください。
 
@@ -72,33 +70,33 @@ CSV形式テキストファイルのセパレータを変更して指定フォ�
 
 ### replaceOnDictサンプル実行
 
-`> C:\tmp\editLogs\bin\CLI\replaceOnDict.exe C:\tmp\editLogs\conf\replaceOnDict\replaceOnDict.conf`<br>
+`> C:\tmp\editLogs\bin\replaceOnDict.exe C:\tmp\editLogs\conf\replaceOnDict\replaceOnDict.conf`<br>
 
 ### chgSepサンプル実行 CSVをTSVに変換
 
-`> C:\tmp\editLogs\bin\CLI\chgSep.exe C:\tmp\editLogs\conf\chgSep\chgSep.conf`<br>
+`> C:\tmp\editLogs\bin\chgSep.exe C:\tmp\editLogs\conf\chgSep\chgSep.conf`<br>
 
 ### chgSepサンプル実行 TSVをCSVに変換
 
-`> C:\tmp\editLogs\bin\CLI\chgSep.exe C:\tmp\editLogs\conf\chgSep\chgSep_TSV2CSV.conf`<br>
+`> C:\tmp\editLogs\bin\chgSep.exe C:\tmp\editLogs\conf\chgSep\chgSep_TSV2CSV.conf`<br>
 
 ### chgSepサンプル実行 Apacheアクセスログのスペース区切りをTSVに変換
 
-`> C:\tmp\editLogs\bin\CLI\chgSep.exe C:\tmp\editLogs\conf\chgSep\chgSep_access_log_SPACE2TAB.conf`<br>
+`> C:\tmp\editLogs\bin\chgSep.exe C:\tmp\editLogs\conf\chgSep\chgSep_access_log_SPACE2TAB.conf`<br>
 
 ### chgSepサンプル実行 netstatコマンド実行結果のスペース区切りをTSVに変換
 
-`> C:\tmp\editLogs\bin\CLI\chgSep.exe C:\tmp\editLogs\conf\chgSep\chgSep_netstat_SPACE2TAB.conf`<br>
+`> C:\tmp\editLogs\bin\chgSep.exe C:\tmp\editLogs\conf\chgSep\chgSep_netstat_SPACE2TAB.conf`<br>
 
 ### chgSepサンプル実行 psコマンド実行結果のスペース区切りをTSVに変換
 
-`> C:\tmp\editLogs\bin\CLI\chgSep.exe C:\tmp\editLogs\conf\chgSep\chgSep_ps_SPACE2TAB.conf`<br>
+`> C:\tmp\editLogs\bin\chgSep.exe C:\tmp\editLogs\conf\chgSep\chgSep_ps_SPACE2TAB.conf`<br>
 
 ### chgSepサンプル実行 topコマンド実行結果のスペース区切りをTSVに変換
 
-`> C:\tmp\editLogs\bin\CLI\chgSep.exe C:\tmp\editLogs\conf\chgSep\chgSep_top_SPACE2TAB.conf`<br>
+`> C:\tmp\editLogs\bin\chgSep.exe C:\tmp\editLogs\conf\chgSep\chgSep_top_SPACE2TAB.conf`<br>
 
 ### chgSepサンプル実行 CSVをTSVに変換　文字コード変換込み
 
-`> C:\tmp\editLogs\bin\CLI\chgSep.exe C:\tmp\editLogs\conf\chgSep\chgSep_enctest.conf`<br>
+`> C:\tmp\editLogs\bin\chgSep.exe C:\tmp\editLogs\conf\chgSep\chgSep_enctest.conf`<br>
 
