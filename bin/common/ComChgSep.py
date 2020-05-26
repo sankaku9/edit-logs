@@ -87,7 +87,8 @@ class ComChgSep:
 
                         # INPUT_SEPにSPACEを選択して、変換対象要素数が指定されている場合
                         if insep == 'SPACE' and (not spaceChgLim == 'FALSE' and len(renewFoLineReplacedList) > int(spaceChgLim)-1):
-                            renewFoLineReplacedListTmpForSpace.append(foLineReplacedListCol)
+                            #renewFoLineReplacedListTmpForSpace.append(foLineReplacedListCol)
+                            pass
 
                         # QUOTE文字から始まり、QUOTE文字で終わらない要素であり、分割されてしまった同一カラムと判断される場合
                         elif re.match(splitColumStartRegex, foLineReplacedListCol) and not re.match(splitColumEndRegex, foLineReplacedListCol):

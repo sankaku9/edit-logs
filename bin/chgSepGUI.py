@@ -42,8 +42,8 @@ def open_file(self):
         # ==========
         # formatparams
         # ==========
-        inputenc_textc.SetValue(cfg_parser_read.get('formatparams', 'INPUT_ENCODE'))
-        outputenc_textc.SetValue(cfg_parser_read.get('formatparams', 'OUTPUT_ENCODE'))
+        inputenc_cbox.SetValue(cfg_parser_read.get('formatparams', 'INPUT_ENCODE'))
+        outputenc_cbox.SetValue(cfg_parser_read.get('formatparams', 'OUTPUT_ENCODE'))
         inputsep_cbox.SetStringSelection(cfg_parser_read.get('formatparams', 'INPUT_SEP'))
         outputsep_cbox.SetStringSelection(cfg_parser_read.get('formatparams', 'OUTPUT_SEP'))
         newline_cbox.SetStringSelection(cfg_parser_read.get('formatparams', 'NEW_LINE'))
@@ -78,8 +78,8 @@ def save_file(self):
     cfg_parser_write.set('baseset', 'MEMO', memo_textc.GetValue())
 
     cfg_parser_write.add_section('formatparams')
-    cfg_parser_write.set('formatparams', 'INPUT_ENCODE', inputenc_textc.GetValue())
-    cfg_parser_write.set('formatparams', 'OUTPUT_ENCODE', outputenc_textc.GetValue())
+    cfg_parser_write.set('formatparams', 'INPUT_ENCODE', inputenc_cbox.GetValue())
+    cfg_parser_write.set('formatparams', 'OUTPUT_ENCODE', outputenc_cbox.GetValue())
     cfg_parser_write.set('formatparams', 'INPUT_SEP', inputsep_cbox.GetValue())
     cfg_parser_write.set('formatparams', 'OUTPUT_SEP', outputsep_cbox.GetValue())
     cfg_parser_write.set('formatparams', 'NEW_LINE', newline_cbox.GetValue())
@@ -195,8 +195,8 @@ def change_sep(application):
                     # 区切り文字変更
                     com_cs.chg_sep(LOGGER_NAME,
                                path.join(walk_root, file).replace(path.sep, '/'),
-                               com_elb.delQuoteStartEnd(inputenc_textc.GetValue()),
-                               com_elb.delQuoteStartEnd(outputenc_textc.GetValue()),
+                               com_elb.delQuoteStartEnd(inputenc_cbox.GetValue()),
+                               com_elb.delQuoteStartEnd(outputenc_cbox.GetValue()),
                                com_elb.delQuoteStartEnd(inputsep_cbox.GetValue()),
                                com_elb.delQuoteStartEnd(outputsep_cbox.GetValue()),
                                com_elb.delQuoteStartEnd(newline_cbox.GetValue()),
@@ -360,10 +360,9 @@ INPUT_SEPにSPACEを選択した場合のみ、連続するセパレータは1�
     # enc_panel2向け要素
     inputenc_stext = wx.StaticText(enc_panel2, wx.ID_ANY, '入力ファイル文字コード[INPUT_ENCODE]')
     outputenc_stext = wx.StaticText(enc_panel2, wx.ID_ANY, '出力ファイル文字コード[OUTPUT_ENCODE]')
-    inputenc_textc = wx.TextCtrl(enc_panel2, wx.ID_ANY, size=(100,-1))
-    outputenc_textc = wx.TextCtrl(enc_panel2, wx.ID_ANY, size=(100,-1))
+    inputenc_cbox = wx.ComboBox(enc_panel2, wx.ID_ANY, '', choices=('utf_8', 'cp932', 'euc_jp'), style=wx.CB_DROPDOWN)
+    outputenc_cbox = wx.ComboBox(enc_panel2, wx.ID_ANY, '', choices=('utf_8', 'cp932', 'euc_jp'), style=wx.CB_DROPDOWN)
     enc_stext = wx.StaticText(enc_panel2, wx.ID_ANY, 'エンコードはpythonのcodecsに準拠します。<https://docs.python.jp/3/library/codecs.html>\n\n\
-※日本語文字コード以外は動作確認していません。\n\
 ※変換不可能な文字が含まれている場合は「●」に置き換えます。\n\
 ※出力ファイルの文字コードをcp932にした場合、「IBM拡張文字」は「NEC選定IBM拡張文字」となります。\n\
 　入力ファイルの文字コードがcp932で「IBM選定IBM拡張文字」が含まれている場合は\n\
@@ -372,9 +371,9 @@ INPUT_SEPにSPACEを選択した場合のみ、連続するセパレータは1�
     # enc_panel2向けSizer
     enc_panel2_sizer = wx.GridBagSizer(8,10)
     enc_panel2_sizer.Add(inputenc_stext, (0,0), (1,1))
-    enc_panel2_sizer.Add(inputenc_textc, (0,1), (1,1))
+    enc_panel2_sizer.Add(inputenc_cbox, (0,1), (1,1))
     enc_panel2_sizer.Add(outputenc_stext, (1,0), (1,1))
-    enc_panel2_sizer.Add(outputenc_textc, (1,1), (1,1))
+    enc_panel2_sizer.Add(outputenc_cbox, (1,1), (1,1))
     enc_panel2_sizer.Add(enc_stext, (2,0), (1,3))
     enc_panel2.SetSizer(enc_panel2_sizer)
 
@@ -457,7 +456,7 @@ FALSEの場合は元ファイルの改行コードに従う。')
 <例:6カラムのデータを3カラム分だけ変換する。（スペース区切りをカンマ区切りに変換）>\n\
 （設定値）INPUT_SEP_SPACE_COL_CHG_LIMIT = 3\n\
 （変換前）行：　foo var hoge foo1 var1 hoge1\n\
-（変換後）行：　foo,var,hoge,foo1 var1 hoge1')
+（変換後）行：　foo,var,hoge')
 
     # tgtlimit_panel 向けSizer
     tgtlimit_panel_box = wx.StaticBox(tgtlimit_panel, wx.ID_ANY, '変換対象カラム数制限[INPUT_SEP_SPACE_COL_CHG_LIMIT]')
