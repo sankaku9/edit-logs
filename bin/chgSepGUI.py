@@ -8,15 +8,16 @@ from re import sub
 from shutil import copytree
 from traceback import format_exc
 
-class MainEvent(wx.Frame):
+class MainFrame(wx.Frame):
 
     def __init__(self):
 
+        wx.Frame.__init__(self, None, wx.ID_ANY, title='セパレータ変換', size=(602, 820))
+
+        # readした時の設定ファイル情報をsave時にも使用する為、クラス変数にしてメソッド間で使いまわす。
         self.load_cfg_path = ''
         self.load_cfg_dir = ''
         self.load_cfg_file = ''
-
-        wx.Frame.__init__(self, None, wx.ID_ANY, title='セパレータ変換', size=(602, 820))
 
         ID_FILE_OPEN = wx.NewIdRef(count=1)
         ID_FILE_SAVE = wx.NewIdRef(count=1)
@@ -44,7 +45,6 @@ class MainEvent(wx.Frame):
         self.memo_textc = wx.TextCtrl(bottom_panel, wx.ID_ANY, style=wx.TE_MULTILINE, size=(560, 70))
         exechg_button = wx.Button(bottom_panel, wx.ID_ANY, '変換実行')
 
-        #exechg_button.Bind(wx.EVT_BUTTON, lambda _: self.change_sep(application))
         exechg_button.Bind(wx.EVT_BUTTON, self.change_sep)
 
         # bottom_panel 向け Sizer
@@ -80,9 +80,7 @@ class MainEvent(wx.Frame):
         ######
         # io_path_panel向け要素
         io_path_panel = wx.Panel(tab_base, wx.ID_ANY)
-        # io_path_panel.SetBackgroundColour('#AA0000')
         io_path_panel2 = wx.Panel(io_path_panel, wx.ID_ANY)
-        # io_path_panel2.SetBackgroundColour('#AA0DD0')
 
         # io_path_panel2向け要素
         workdir_stext = wx.StaticText(io_path_panel2, wx.ID_ANY, 'ワークディレクトリ[WORK_DIR]: \n※絶対パス指定')
@@ -110,9 +108,7 @@ class MainEvent(wx.Frame):
 
         # sep_panel向け要素
         sep_panel = wx.Panel(tab_base, wx.ID_ANY)
-        # sep_panel.SetBackgroundColour('#ff00ff')
         sep_panel2 = wx.Panel(sep_panel, wx.ID_ANY)
-        # sep_panel2.SetBackgroundColour('#EE00EE')
 
         # sep_panel2向け要素
         inputsep_stext = wx.StaticText(sep_panel2, wx.ID_ANY, '入力ファイル区切り文字[INPUT_SEP]')
@@ -144,9 +140,7 @@ class MainEvent(wx.Frame):
 
         # enc_panel向け要素
         enc_panel = wx.Panel(tab_base, wx.ID_ANY)
-        # enc_panel.SetBackgroundColour('#00ffff')
         enc_panel2 = wx.Panel(enc_panel, wx.ID_ANY)
-        # enc_panel2.SetBackgroundColour('#00ccff')
 
         # enc_panel2向け要素
         inputenc_stext = wx.StaticText(enc_panel2, wx.ID_ANY, '入力ファイル文字コード[INPUT_ENCODE]')
@@ -574,8 +568,7 @@ class MainEvent(wx.Frame):
 
 if __name__ == '__main__':
 
-    # Window設定
     application = wx.App()
-    MainEvent()
+    MainFrame()
     application.MainLoop()
 
