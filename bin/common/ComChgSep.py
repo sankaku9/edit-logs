@@ -10,7 +10,7 @@ class ComChgSep:
         pass
 
     # 区切り文字変更
-    def chg_sep(self, loggername, filePath, inenc, outenc, insep, outsep, nl, quote, spaceChgLim, dateRegex, indateform, outdateform, extregex):
+    def chg_sep(self, loggername, filePath, inenc, outenc, insep, outsep, nl, quote, spaceChgLim, spaceChgLimOpt1, dateRegex, indateform, outdateform, extregex):
 
         # 入力値チェック
         insepList = ['COMMA','TAB','SPACE']
@@ -87,8 +87,13 @@ class ComChgSep:
 
                         # INPUT_SEPにSPACEを選択して、変換対象要素数が指定されている場合
                         if insep == 'SPACE' and (not spaceChgLim == 'FALSE' and len(renewFoLineReplacedList) > int(spaceChgLim)-1):
-                            #renewFoLineReplacedListTmpForSpace.append(foLineReplacedListCol)
-                            pass
+                            # 変換対象外カラムの取り扱い
+                            if spaceChgLimOpt1:
+                                # そのまま出力。
+                                renewFoLineReplacedListTmpForSpace.append(foLineReplacedListCol)
+                            else:
+                                # 出力しない。
+                                pass
 
                         # QUOTE文字から始まり、QUOTE文字で終わらない要素であり、分割されてしまった同一カラムと判断される場合
                         elif re.match(splitColumStartRegex, foLineReplacedListCol) and not re.match(splitColumEndRegex, foLineReplacedListCol):

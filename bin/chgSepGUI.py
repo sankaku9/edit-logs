@@ -115,7 +115,8 @@ class MainFrame(wx.Frame):
         outputsep_stext = wx.StaticText(sep_panel2, wx.ID_ANY, '出力ファイル区切り文字[OUTPUT_SEP]')
         self.inputsep_cbox = wx.ComboBox(sep_panel2, wx.ID_ANY, 'COMMA', choices=('COMMA', 'TAB', 'SPACE'), style=wx.CB_READONLY)
         self.outputsep_cbox = wx.ComboBox(sep_panel2, wx.ID_ANY, 'COMMA', choices=('COMMA', 'TAB', 'SPACE'), style=wx.CB_READONLY)
-        sep_stext = wx.StaticText(sep_panel2, wx.ID_ANY, 'COMMA, TAB, SPACE のどれかを選択。\n\
+        sep_stext = wx.StaticText(sep_panel2, wx.ID_ANY, '\
+    COMMA, TAB, SPACE のどれかを選択。\n\
     INPUT_SEPにSPACEを選択した場合のみ、連続するセパレータは1つと解釈されます。\n\n\
     <例>\n\
     （変換前）行：　"foo"␣␣␣"var"␣␣␣␣␣"hoge"　（<--半角スペースを␣で表示）\n\
@@ -147,7 +148,8 @@ class MainFrame(wx.Frame):
         outputenc_stext = wx.StaticText(enc_panel2, wx.ID_ANY, '出力ファイル文字コード[OUTPUT_ENCODE]')
         self.inputenc_cbox = wx.ComboBox(enc_panel2, wx.ID_ANY, '', choices=('utf_8', 'cp932', 'shift_jis', 'euc_jp'), style=wx.CB_DROPDOWN)
         self.outputenc_cbox = wx.ComboBox(enc_panel2, wx.ID_ANY, '', choices=('utf_8', 'cp932', 'shift_jis', 'euc_jp'), style=wx.CB_DROPDOWN)
-        enc_stext = wx.StaticText(enc_panel2, wx.ID_ANY, 'エンコードはpythonのcodecsに準拠します。<https://docs.python.jp/3/library/codecs.html>\n\n\
+        enc_stext = wx.StaticText(enc_panel2, wx.ID_ANY, '\
+    エンコードはpythonのcodecsに準拠します。<https://docs.python.jp/3/library/codecs.html>\n\n\
     ※変換不可能な文字が含まれている場合は「●」に置き換えます。\n\
     ※出力ファイルの文字コードをcp932にした場合、「IBM拡張文字」は「NEC選定IBM拡張文字」となります。\n\
     　入力ファイルの文字コードがcp932で「IBM選定IBM拡張文字」が含まれている場合は\n\
@@ -183,7 +185,8 @@ class MainFrame(wx.Frame):
 
         # quote_panel 向け要素
         self.quote_cbox = wx.ComboBox(quote_panel, wx.ID_ANY, 'FALSE', choices=('FALSE', 'SINGLE', 'DOUBLE', 'QUOTES', 'SQUARE_BRACKETS', 'ALL'), style=wx.CB_READONLY)
-        quote_stext = wx.StaticText(quote_panel, wx.ID_ANY, '囲み文字内に区切り文字が存在しても区切り文字として認識されません。\n\
+        quote_stext = wx.StaticText(quote_panel, wx.ID_ANY, '\
+    囲み文字内に区切り文字が存在しても区切り文字として認識されません。\n\
         （例）\'fo,o\' "va,r" [h,oge]\n\n\
     設定可能なパラメータは以下の通り。\n\
         ・FALSE : 囲み文字処理無し\n\
@@ -210,7 +213,8 @@ class MainFrame(wx.Frame):
 
         # newline_panel 向け要素
         self.newline_cbox = wx.ComboBox(newline_panel, wx.ID_ANY, 'CRLF', choices=('CRLF', 'LF', 'CR', 'FALSE'), style=wx.CB_READONLY)
-        newline_stext = wx.StaticText(newline_panel, wx.ID_ANY, 'CRLF, LF, CR, FALSE のどれかを選択。\n\
+        newline_stext = wx.StaticText(newline_panel, wx.ID_ANY, '\
+    CRLF, LF, CR, FALSE のどれかを選択。\n\
     FALSEの場合は元ファイルの改行コードに従う。')
 
         # newline_panel 向けSizer
@@ -234,19 +238,28 @@ class MainFrame(wx.Frame):
 
         # tgtlimit_panel 向け要素
         self.tgtlimit_textc = wx.TextCtrl(tgtlimit_panel, wx.ID_ANY, 'FALSE', size=(50, -1))
-        self.tgtlimit_stext = wx.StaticText(tgtlimit_panel, wx.ID_ANY, 'INPUT_SEPにSPACEを選択した場合の変換対象のカラム数を数値で指定（左から数える）。\n\
+        self.tgtlimit_stext = wx.StaticText(tgtlimit_panel, wx.ID_ANY, '\
+    INPUT_SEPにSPACEを選択した場合の変換対象のカラム数を数値で指定（左から数える）。\n\
     全カラムを変換対象とする場合及び、INPUT_SEPにSPACEを選択しない場合は\n\
     「FALSE」を入力しておく。\n\n\
     <例:6カラムのデータを3カラム分だけ変換する。（スペース区切りをカンマ区切りに変換）>\n\
     （設定値）INPUT_SEP_SPACE_COL_CHG_LIMIT = 3\n\
     （変換前）行：　foo var hoge foo1 var1 hoge1\n\
     （変換後）行：　foo,var,hoge')
+        self.tgtlimit_chkbox = wx.CheckBox(tgtlimit_panel, wx.ID_ANY, '変換対象外カラムを結果ファイルに残す。')
+        self.tgtlimit_stext2 = wx.StaticText(tgtlimit_panel, wx.ID_ANY, '\
+    <例:6カラムのデータを3カラム分だけ変換する。残カラムは末尾付与。（スペース区切りをカンマ区切りに変換）>\n\
+    （設定値）INPUT_SEP_SPACE_COL_CHG_LIMIT = 3\n\
+    （変換前）行：　foo var hoge foo1 var1 hoge1\n\
+    （変換後）行：　foo,var,hoge,foo1 var1 hoge1')
 
         # tgtlimit_panel 向けSizer
         tgtlimit_panel_box = wx.StaticBox(tgtlimit_panel, wx.ID_ANY, '変換対象カラム数制限[INPUT_SEP_SPACE_COL_CHG_LIMIT]')
         tgtlimit_panel_sizer = wx.StaticBoxSizer(tgtlimit_panel_box, wx.VERTICAL)
         tgtlimit_panel_sizer.Add(self.tgtlimit_textc, 0, wx.BOTTOM, 5)
-        tgtlimit_panel_sizer.Add(self.tgtlimit_stext, 0, wx.BOTTOM, 5)
+        tgtlimit_panel_sizer.Add(self.tgtlimit_stext, 0, wx.BOTTOM, 30)
+        tgtlimit_panel_sizer.Add(self.tgtlimit_chkbox, 0, wx.BOTTOM, 5)
+        tgtlimit_panel_sizer.Add(self.tgtlimit_stext2, 0, wx.BOTTOM, 5)
         tgtlimit_panel.SetSizer(tgtlimit_panel_sizer)
 
         # tab_tgtlimit 向けSizer
@@ -267,7 +280,8 @@ class MainFrame(wx.Frame):
         self.input_date_format_textc = wx.TextCtrl(date_panel, wx.ID_ANY, size=(560, -1))
         output_date_format_stext = wx.StaticText(date_panel, wx.ID_ANY, '出力日時フォーマット[OUTPUT_DATE_FORMAT]')
         self.output_date_format_textc = wx.TextCtrl(date_panel, wx.ID_ANY, size=(560, -1))
-        date_ext_stext = wx.StaticText(date_panel, wx.ID_ANY, '正規表現DATE_LINE_REGEXに従って行内に存在する日時に関わる\n\
+        date_ext_stext = wx.StaticText(date_panel, wx.ID_ANY, '\
+    正規表現DATE_LINE_REGEXに従って行内に存在する日時に関わる\n\
     文字列を取得してINPUT_DATE_FORMATで日付型に変換し、該当行及び\n\
     以降の行の行頭にOUTPUT_DATE_FORMATの形式で日時を付与する。\n\
     ※行頭付与される日時は「変換制限」の制限カラム数に含まれません。\n\n\
@@ -313,10 +327,12 @@ class MainFrame(wx.Frame):
 
         # extract_panel 向け要素
         self.extract_textc = wx.TextCtrl(extract_panel, wx.ID_ANY, size=(560, -1))
-        self.extract_stext = wx.StaticText(extract_panel, wx.ID_ANY, '正規表現に一致する文字列を含む行のみ出力する。\n使用しない場合は空白とする。')
+        self.extract_stext = wx.StaticText(extract_panel, wx.ID_ANY, '\
+    正規表現に一致する文字列を含む行のみ出力する。\n使用しない場合は空白とする。')
 
         # extract_panel 向けSizer
-        extract_panel_box = wx.StaticBox(extract_panel, wx.ID_ANY, '抽出用正規表現[EXTRACT_ON_REGEX]')
+        extract_panel_box = wx.StaticBox(extract_panel, wx.ID_ANY, '\
+    抽出用正規表現[EXTRACT_ON_REGEX]')
         extract_panel_sizer = wx.StaticBoxSizer(extract_panel_box, wx.VERTICAL)
         extract_panel_sizer.Add(self.extract_textc, 0, wx.BOTTOM, 5)
         extract_panel_sizer.Add(self.extract_stext, 0, wx.BOTTOM, 5)
@@ -400,6 +416,7 @@ class MainFrame(wx.Frame):
             self.newline_cbox.SetStringSelection(cfg_parser_read.get('formatparams', 'NEW_LINE'))
             self.quote_cbox.SetStringSelection(cfg_parser_read.get('formatparams', 'QUOTE'))
             self.tgtlimit_textc.SetValue(cfg_parser_read.get('formatparams', 'INPUT_SEP_SPACE_COL_CHG_LIMIT'))
+            self.tgtlimit_chkbox.SetValue(int(cfg_parser_read.get('formatparams', 'INPUT_SEP_SPACE_COL_CHG_LIMIT_OPTION1')))
             self.date_line_regex_textc.SetValue(cfg_parser_read.get('formatparams', 'DATE_LINE_REGEX'))
             self.input_date_format_textc.SetValue(cfg_parser_read.get('formatparams', 'INPUT_DATE_FORMAT'))
             self.output_date_format_textc.SetValue(cfg_parser_read.get('formatparams', 'OUTPUT_DATE_FORMAT'))
@@ -433,6 +450,7 @@ class MainFrame(wx.Frame):
         cfg_parser_write.set('formatparams', 'NEW_LINE', self.newline_cbox.GetValue())
         cfg_parser_write.set('formatparams', 'QUOTE', self.quote_cbox.GetValue())
         cfg_parser_write.set('formatparams', 'INPUT_SEP_SPACE_COL_CHG_LIMIT', self.tgtlimit_textc.GetValue())
+        cfg_parser_write.set('formatparams', 'INPUT_SEP_SPACE_COL_CHG_LIMIT_OPTION1', int(self.tgtlimit_chkbox.GetValue()))
         cfg_parser_write.set('formatparams', 'DATE_LINE_REGEX', self.date_line_regex_textc.GetValue())
         cfg_parser_write.set('formatparams', 'INPUT_DATE_FORMAT', self.input_date_format_textc.GetValue())
         cfg_parser_write.set('formatparams', 'OUTPUT_DATE_FORMAT', self.output_date_format_textc.GetValue())
@@ -550,6 +568,7 @@ class MainFrame(wx.Frame):
                                    com_elb.delQuoteStartEnd(self.newline_cbox.GetValue()),
                                    com_elb.delQuoteStartEnd(self.quote_cbox.GetValue()),
                                    com_elb.delQuoteStartEnd(self.tgtlimit_textc.GetValue()),
+                                   int(self.tgtlimit_chkbox.GetValue()),
                                    com_elb.delQuoteStartEnd(self.date_line_regex_textc.GetValue()),
                                    com_elb.delQuoteStartEnd(self.input_date_format_textc.GetValue()),
                                    com_elb.delQuoteStartEnd(self.output_date_format_textc.GetValue()),

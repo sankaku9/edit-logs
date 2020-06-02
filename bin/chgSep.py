@@ -83,6 +83,7 @@ if __name__ == '__main__':
                            comE.delQuoteStartEnd(confParser.get('formatparams', 'NEW_LINE')),
                            comE.delQuoteStartEnd(confParser.get('formatparams', 'QUOTE')),
                            comE.delQuoteStartEnd(confParser.get('formatparams', 'INPUT_SEP_SPACE_COL_CHG_LIMIT')),
+                           int(comE.delQuoteStartEnd(confParser.get('formatparams', 'INPUT_SEP_SPACE_COL_CHG_LIMIT_OPTION1'))),
                            comE.delQuoteStartEnd(confParser.get('formatparams', 'DATE_LINE_REGEX')),
                            comE.delQuoteStartEnd(confParser.get('formatparams', 'INPUT_DATE_FORMAT')),
                            comE.delQuoteStartEnd(confParser.get('formatparams', 'OUTPUT_DATE_FORMAT')),
