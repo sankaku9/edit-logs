@@ -359,7 +359,7 @@ class MainFrame(wx.Frame):
         log_fmtconsole_stext = wx.StaticText(log_panel, wx.ID_ANY, 'コンソール向けログフォーマット[FORMAT_CONSOLE]')
         self.log_fmtconsole_textc = wx.TextCtrl(log_panel, wx.ID_ANY, '%(asctime)s.%(msecs)d : %(name)s : %(levelname)s : %(lineno)d : "%(message)s"', size=(560, -1))
         log_fmtfile_stext = wx.StaticText(log_panel, wx.ID_ANY, 'ファイル向けログフォーマット[FORMAT_FILE]')
-        self.log_fmtfile_textc = wx.TextCtrl(log_panel, wx.ID_ANY, '"%(asctime)s"    "%(msecs)d"    "%(name)s"    "%(levelname)s"    "%(lineno)d"    "%(message)s"', size=(560, -1))
+        self.log_fmtfile_textc = wx.TextCtrl(log_panel, wx.ID_ANY, '"%(asctime)s"	"%(msecs)d"	"%(name)s"	"%(levelname)s"	"%(lineno)d"	"%(message)s"', size=(560, -1))
 
         # log_panel 向けSizer
         log_panel_box = wx.StaticBox(log_panel, wx.ID_ANY, 'ログ設定')
