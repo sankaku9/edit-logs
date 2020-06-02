@@ -137,7 +137,7 @@ class EditLogBase:
             elif match('.\r', strend):
                 targetStr = targetStr.replace('\r', '\n')
             else:
-                targetStr = ''.join([str, '\n'])
+                targetStr = ''.join([targetStr, '\n'])
         elif nl == 'CR':
             if strend == "\r\n":
                 targetStr = targetStr.replace('\r\n', '\r')
@@ -146,7 +146,7 @@ class EditLogBase:
             elif match('.\r', strend):
                 pass
             else:
-                targetStr = ''.join([str, '\r'])
+                targetStr = ''.join([targetStr, '\r'])
         else:
             pass
 
