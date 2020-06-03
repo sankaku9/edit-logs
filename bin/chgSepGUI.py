@@ -24,8 +24,8 @@ class MainFrame(wx.Frame):
 
         # メニュー
         menu_conf = wx.Menu()
-        menu_conf.Append(ID_FILE_OPEN, '開く')
-        menu_conf.Append(ID_FILE_SAVE, '保存')
+        menu_conf.Append(ID_FILE_OPEN, '開く\tCtrl+o')
+        menu_conf.Append(ID_FILE_SAVE, '保存\tCtrl+s')
 
         menu_bar = wx.MenuBar()
         menu_bar.Append(menu_conf, '設定ファイル')
